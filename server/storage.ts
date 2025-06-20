@@ -5,6 +5,8 @@ import {
   offers, 
   userFavorites, 
   userBookings,
+  userItinerary,
+  restaurants,
   type User, 
   type InsertUser,
   type Attraction,
@@ -16,7 +18,11 @@ import {
   type UserFavorite,
   type InsertUserFavorite,
   type UserBooking,
-  type InsertUserBooking
+  type InsertUserBooking,
+  type UserItinerary,
+  type InsertUserItinerary,
+  type Restaurant,
+  type InsertRestaurant
 } from "@shared/schema";
 
 export interface IStorage {
@@ -52,6 +58,17 @@ export interface IStorage {
   // User bookings
   getUserBookings(userId: number): Promise<Event[]>;
   createBooking(booking: InsertUserBooking): Promise<UserBooking>;
+  
+  // User itinerary
+  getUserItinerary(userId: number): Promise<Attraction[]>;
+  addToItinerary(itinerary: InsertUserItinerary): Promise<UserItinerary>;
+  removeFromItinerary(userId: number, attractionId: number): Promise<boolean>;
+  
+  // Restaurants
+  getRestaurants(city?: string): Promise<Restaurant[]>;
+  getRestaurant(id: number): Promise<Restaurant | undefined>;
+  getRecommendedRestaurants(city?: string): Promise<Restaurant[]>;
+  searchRestaurants(query: string, city?: string): Promise<Restaurant[]>;
 }
 
 export class MemStorage implements IStorage {
@@ -61,12 +78,16 @@ export class MemStorage implements IStorage {
   private offers: Map<number, Offer> = new Map();
   private userFavorites: Map<number, UserFavorite> = new Map();
   private userBookings: Map<number, UserBooking> = new Map();
+  private userItinerary: Map<number, UserItinerary> = new Map();
+  private restaurants: Map<number, Restaurant> = new Map();
   private currentUserId = 1;
   private currentAttractionId = 1;
   private currentEventId = 1;
   private currentOfferId = 1;
   private currentFavoriteId = 1;
   private currentBookingId = 1;
+  private currentItineraryId = 1;
+  private currentRestaurantId = 1;
 
   constructor() {
     this.seedData();
@@ -261,6 +282,363 @@ export class MemStorage implements IStorage {
         longitude: "87.5090",
         isTrending: true,
         isFeatured: false,
+      },
+      {
+        name: "Dakshineswar Kali Temple",
+        description: "Dakshineswar Kali Temple is a Hindu navaratna temple located in Dakshineswar near Kolkata. Situated on the eastern bank of the Hooghly River, the presiding deity of the temple is Bhavatarini, an aspect of Kali.",
+        shortDescription: "Sacred temple dedicated to Goddess Kali",
+        category: "Temple",
+        city: "Kolkata",
+        imageUrl: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.6",
+        reviewCount: 8900,
+        entryFee: "Free",
+        openHours: "6:00 AM - 12:30 PM, 3:00 PM - 9:00 PM",
+        location: "Dakshineswar, Kolkata",
+        latitude: "22.6555",
+        longitude: "88.3568",
+        isTrending: true,
+        isFeatured: true,
+      },
+      {
+        name: "Belur Math",
+        description: "Belur Math is the headquarters of the Ramakrishna Math and Mission, founded by Swami Vivekananda. It is notable for its architecture that fuses Hindu, Christian and Islamic motifs.",
+        shortDescription: "Headquarters of Ramakrishna Mission",
+        category: "Temple",
+        city: "Kolkata",
+        imageUrl: "https://images.unsplash.com/photo-1590736969955-71cc94901144?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.7",
+        reviewCount: 5400,
+        entryFee: "Free",
+        openHours: "6:00 AM - 12:00 PM, 4:00 PM - 7:00 PM",
+        location: "Belur, Howrah",
+        latitude: "22.6320",
+        longitude: "88.3573",
+        isTrending: false,
+        isFeatured: true,
+      },
+      {
+        name: "Marble Palace",
+        description: "Marble Palace is a palatial nineteenth-century mansion in North Kolkata. It is one of the best-preserved and most elegant houses of nineteenth-century Calcutta.",
+        shortDescription: "19th century palatial mansion",
+        category: "Palace",
+        city: "Kolkata",
+        imageUrl: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.3",
+        reviewCount: 2100,
+        entryFee: "Free (Permission required)",
+        openHours: "10:00 AM - 4:00 PM",
+        location: "North Kolkata",
+        latitude: "22.6065",
+        longitude: "88.3779",
+        isTrending: false,
+        isFeatured: false,
+      },
+      {
+        name: "Science City",
+        description: "Science City Kolkata is the largest science centre in the Indian subcontinent. It is managed by the National Council of Science Museums, Ministry of Culture, Government of India.",
+        shortDescription: "Interactive science museum and park",
+        category: "Museum",
+        city: "Kolkata",
+        imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.2",
+        reviewCount: 6800,
+        entryFee: "₹60",
+        openHours: "9:00 AM - 8:00 PM",
+        location: "Eastern Metropolitan Bypass, Kolkata",
+        latitude: "22.4987",
+        longitude: "88.3948",
+        isTrending: true,
+        isFeatured: false,
+      },
+      {
+        name: "Botanical Garden",
+        description: "The Acharya Jagadish Chandra Bose Indian Botanic Garden is a botanical garden in Shibpur, Howrah. It is under the authority of Botanical Survey of India, Ministry of Environment and Forests.",
+        shortDescription: "Historic botanical garden with Great Banyan Tree",
+        category: "Garden",
+        city: "Howrah",
+        imageUrl: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.4",
+        reviewCount: 4200,
+        entryFee: "₹10",
+        openHours: "7:00 AM - 5:00 PM",
+        location: "Shibpur, Howrah",
+        latitude: "22.5608",
+        longitude: "88.2677",
+        isTrending: false,
+        isFeatured: true,
+      },
+      {
+        name: "Kalimpong Hill Station",
+        description: "Kalimpong is a hill station in the Indian state of West Bengal. It is located at an average elevation of 1,250 metres and is famous for its schools, monasteries and nurseries.",
+        shortDescription: "Scenic hill station with monasteries",
+        category: "Nature",
+        city: "Kalimpong",
+        imageUrl: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.5",
+        reviewCount: 3600,
+        entryFee: "Free",
+        openHours: "Open 24/7",
+        location: "Kalimpong",
+        latitude: "27.0669",
+        longitude: "88.4686",
+        isTrending: true,
+        isFeatured: false,
+      },
+      {
+        name: "Cooch Behar Palace",
+        description: "Cooch Behar Palace, also called the Victor Jubilee Palace, is a landmark in Cooch Behar city, West Bengal. It was modeled after Buckingham Palace in London.",
+        shortDescription: "Royal palace modeled after Buckingham Palace",
+        category: "Palace",
+        city: "Cooch Behar",
+        imageUrl: "https://images.unsplash.com/photo-1590736969955-71cc94901144?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.4",
+        reviewCount: 1800,
+        entryFee: "₹20",
+        openHours: "10:00 AM - 5:00 PM",
+        location: "Cooch Behar",
+        latitude: "26.3249",
+        longitude: "89.4425",
+        isTrending: false,
+        isFeatured: true,
+      },
+      {
+        name: "Mandarmani Beach",
+        description: "Mandarmani is a seaside resort village in the state of West Bengal, India. It has the longest drivable beach in India and is a popular weekend destination.",
+        shortDescription: "Longest drivable beach in India",
+        category: "Beach",
+        city: "Mandarmani",
+        imageUrl: "https://images.unsplash.com/photo-1505142468610-359e7d316be0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.2",
+        reviewCount: 5400,
+        entryFee: "Free",
+        openHours: "Open 24/7",
+        location: "Mandarmani, East Midnapore",
+        latitude: "21.6586",
+        longitude: "87.7914",
+        isTrending: true,
+        isFeatured: false,
+      },
+      {
+        name: "Shantiniketan",
+        description: "Shantiniketan is a neighbourhood of Bolpur city in Birbhum district. It was established by Maharshi Devendranath Tagore, and later expanded by his son Rabindranath Tagore.",
+        shortDescription: "Cultural center founded by Rabindranath Tagore",
+        category: "Cultural",
+        city: "Shantiniketan",
+        imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.6",
+        reviewCount: 7800,
+        entryFee: "₹10",
+        openHours: "6:00 AM - 6:00 PM",
+        location: "Shantiniketan, Birbhum",
+        latitude: "23.6817",
+        longitude: "87.6820",
+        isTrending: true,
+        isFeatured: true,
+      },
+      {
+        name: "Mayurbhanj Palace",
+        description: "The Mayurbhanj Palace in Baripada is a magnificent example of Indo-Saracenic architecture and was the residence of the Mayurbhanj royal family.",
+        shortDescription: "Indo-Saracenic architecture palace",
+        category: "Palace",
+        city: "Baripada",
+        imageUrl: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.1",
+        reviewCount: 1200,
+        entryFee: "₹25",
+        openHours: "9:00 AM - 5:00 PM",
+        location: "Baripada",
+        latitude: "21.9347",
+        longitude: "86.7336",
+        isTrending: false,
+        isFeatured: false,
+      },
+      {
+        name: "Netaji Bhawan",
+        description: "Netaji Bhawan is the ancestral home of Netaji Subhas Chandra Bose in Kolkata. It has been converted into a museum and research centre.",
+        shortDescription: "Ancestral home of Netaji Subhas Chandra Bose",
+        category: "Museum",
+        city: "Kolkata",
+        imageUrl: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.3",
+        reviewCount: 2800,
+        entryFee: "₹10",
+        openHours: "10:30 AM - 4:30 PM",
+        location: "Elgin Road, Kolkata",
+        latitude: "22.5389",
+        longitude: "88.3528",
+        isTrending: false,
+        isFeatured: false,
+      },
+      {
+        name: "Eco Park",
+        description: "Eco Park is an urban park located in New Town, Kolkata. It is the largest urban park in India and features various themed gardens and recreational facilities.",
+        shortDescription: "Largest urban park in India",
+        category: "Park",
+        city: "Kolkata",
+        imageUrl: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.4",
+        reviewCount: 12000,
+        entryFee: "₹30",
+        openHours: "9:00 AM - 7:00 PM",
+        location: "New Town, Kolkata",
+        latitude: "22.5746",
+        longitude: "88.4739",
+        isTrending: true,
+        isFeatured: true,
+      },
+      {
+        name: "Nicco Park",
+        description: "Nicco Park is an amusement park located in Kolkata, West Bengal. It is one of the largest amusement parks in Eastern India and offers various rides and attractions.",
+        shortDescription: "Popular amusement park with thrilling rides",
+        category: "Amusement",
+        city: "Kolkata",
+        imageUrl: "https://images.unsplash.com/photo-1594623930572-300a3011d9ae?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.0",
+        reviewCount: 8900,
+        entryFee: "₹350",
+        openHours: "10:30 AM - 7:00 PM",
+        location: "Sector V, Salt Lake, Kolkata",
+        latitude: "22.5726",
+        longitude: "88.4166",
+        isTrending: false,
+        isFeatured: false,
+      },
+      {
+        name: "Alipore Zoo",
+        description: "The Alipore Zoological Gardens is India's oldest formally stated zoological park and a major tourist attraction in Kolkata, West Bengal.",
+        shortDescription: "India's oldest zoo with diverse wildlife",
+        category: "Zoo",
+        city: "Kolkata",
+        imageUrl: "https://images.unsplash.com/photo-1549366021-9f761d040a94?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.1",
+        reviewCount: 11200,
+        entryFee: "₹20",
+        openHours: "9:00 AM - 5:00 PM",
+        location: "Alipore, Kolkata",
+        latitude: "22.5197",
+        longitude: "88.3331",
+        isTrending: false,
+        isFeatured: false,
+      },
+      {
+        name: "Rabindra Sarovar",
+        description: "Rabindra Sarovar is an artificial lake in South Kolkata. It is flanked by Rabindra Sarovar Metro Station and is a popular spot for morning walks and boating.",
+        shortDescription: "Scenic artificial lake for recreation",
+        category: "Lake",
+        city: "Kolkata",
+        imageUrl: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.2",
+        reviewCount: 6400,
+        entryFee: "Free",
+        openHours: "5:00 AM - 10:00 PM",
+        location: "South Kolkata",
+        latitude: "22.5158",
+        longitude: "88.3649",
+        isTrending: false,
+        isFeatured: false,
+      },
+      {
+        name: "Mirik Lake",
+        description: "Mirik is a small town and a hill station in Darjeeling district. The town is known for the Mirik Lake, which is surrounded by a garden on one side and pine trees on the other.",
+        shortDescription: "Beautiful hill station lake surrounded by gardens",
+        category: "Lake",
+        city: "Mirik",
+        imageUrl: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.5",
+        reviewCount: 3200,
+        entryFee: "Free",
+        openHours: "Open 24/7",
+        location: "Mirik, Darjeeling",
+        latitude: "26.8844",
+        longitude: "88.1719",
+        isTrending: true,
+        isFeatured: true,
+      },
+      {
+        name: "Murshidabad Palace",
+        description: "Hazarduari Palace is a palace located in Murshidabad, West Bengal. It was built in 1837 by architect Duncan McLeod under the reign of Nawab Nazim Humayun Jah.",
+        shortDescription: "Historic palace with thousand doors",
+        category: "Palace",
+        city: "Murshidabad",
+        imageUrl: "https://images.unsplash.com/photo-1590736969955-71cc94901144?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.4",
+        reviewCount: 2600,
+        entryFee: "₹15",
+        openHours: "9:00 AM - 5:00 PM",
+        location: "Murshidabad",
+        latitude: "24.1761",
+        longitude: "88.2700",
+        isTrending: false,
+        isFeatured: true,
+      },
+      {
+        name: "Durgapur Steel Plant",
+        description: "Durgapur Steel Plant is one of the integrated steel plants of Steel Authority of India Limited. It offers guided tours showcasing modern steel manufacturing processes.",
+        shortDescription: "Modern steel manufacturing facility tours",
+        category: "Industrial",
+        city: "Durgapur",
+        imageUrl: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "3.9",
+        reviewCount: 1400,
+        entryFee: "₹50 (Tour)",
+        openHours: "Prior appointment required",
+        location: "Durgapur",
+        latitude: "23.5204",
+        longitude: "87.3119",
+        isTrending: false,
+        isFeatured: false,
+      },
+      {
+        name: "Bakkhali Beach",
+        description: "Bakkhali is a seaside resort town located on an island in the Sundarbans area. It is known for its pristine beaches and peaceful environment.",
+        shortDescription: "Serene beach in the Sundarbans region",
+        category: "Beach",
+        city: "Bakkhali",
+        imageUrl: "https://images.unsplash.com/photo-1505142468610-359e7d316be0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.0",
+        reviewCount: 4800,
+        entryFee: "Free",
+        openHours: "Open 24/7",
+        location: "Bakkhali, South 24 Parganas",
+        latitude: "21.5647",
+        longitude: "88.2275",
+        isTrending: true,
+        isFeatured: false,
+      },
+      {
+        name: "Jaldapara National Park",
+        description: "Jaldapara National Park is a national park situated at the foothills of the Eastern Himalayas in Alipurduar district. It is famous for its population of Indian rhinoceros.",
+        shortDescription: "National park famous for one-horned rhinoceros",
+        category: "Wildlife",
+        city: "Alipurduar",
+        imageUrl: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.3",
+        reviewCount: 2900,
+        entryFee: "₹150",
+        openHours: "6:00 AM - 6:00 PM",
+        location: "Alipurduar",
+        latitude: "26.7417",
+        longitude: "89.2833",
+        isTrending: false,
+        isFeatured: true,
+      },
+      {
+        name: "Gorumara National Park",
+        description: "Gorumara National Park is a national park in northern West Bengal. The park is rich in wildlife including elephants, rhinoceros, gaur, sambhar, and chital.",
+        shortDescription: "Rich wildlife sanctuary with elephants",
+        category: "Wildlife",
+        city: "Lataguri",
+        imageUrl: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.4",
+        reviewCount: 3400,
+        entryFee: "₹120",
+        openHours: "6:00 AM - 4:00 PM",
+        location: "Lataguri, Jalpaiguri",
+        latitude: "26.7500",
+        longitude: "88.8000",
+        isTrending: true,
+        isFeatured: false,
       }
     ];
 
@@ -400,6 +778,123 @@ export class MemStorage implements IStorage {
         price: "₹50",
         isBookable: false,
         organizer: "West Bengal Handicrafts Board",
+      },
+      {
+        title: "Baul Folk Music Festival",
+        description: "Traditional Baul folk music festival featuring mystic minstrels of Bengal performing spiritual songs with unique instruments.",
+        category: "Music",
+        city: "Shantiniketan",
+        venue: "Visva-Bharati University",
+        imageUrl: "https://images.unsplash.com/photo-1507838153414-b4b713384a76?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        startDate: new Date("2024-11-10"),
+        endDate: new Date("2024-11-12"),
+        price: "₹200 - ₹800",
+        isBookable: true,
+        organizer: "Baul Sangha",
+      },
+      {
+        title: "Jagaddhatri Puja",
+        description: "Grand celebration of Goddess Jagaddhatri with magnificent pandals, cultural programs, and traditional rituals.",
+        category: "Festival",
+        city: "Chandannagar",
+        venue: "Various Pandals",
+        imageUrl: "https://images.unsplash.com/photo-1542718610-8b57c8bfb02c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        startDate: new Date("2024-11-20"),
+        endDate: new Date("2024-11-22"),
+        price: "Free",
+        isBookable: false,
+        organizer: "Local Committees",
+      },
+      {
+        title: "Street Food Festival",
+        description: "Celebration of Bengali street food culture featuring authentic dishes from different regions of West Bengal.",
+        category: "Food",
+        city: "Kolkata",
+        venue: "Eco Park",
+        imageUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        startDate: new Date("2024-12-28"),
+        endDate: new Date("2024-12-30"),
+        price: "₹100",
+        isBookable: true,
+        organizer: "Food Lovers Association",
+      },
+      {
+        title: "Dhak Competition",
+        description: "Traditional dhak (drum) playing competition featuring master drummers from across Bengal.",
+        category: "Cultural",
+        city: "Kolkata",
+        venue: "Rabindra Sadan",
+        imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        startDate: new Date("2024-10-20"),
+        endDate: new Date("2024-10-20"),
+        price: "₹150",
+        isBookable: true,
+        organizer: "Cultural Heritage Society",
+      },
+      {
+        title: "Boat Race Festival",
+        description: "Traditional boat racing competition on the Ganges with colorful boats and enthusiastic participants.",
+        category: "Sports",
+        city: "Kolkata",
+        venue: "Hooghly River",
+        imageUrl: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        startDate: new Date("2024-12-10"),
+        endDate: new Date("2024-12-10"),
+        price: "Free",
+        isBookable: false,
+        organizer: "River Sports Association",
+      },
+      {
+        title: "Classical Dance Recital",
+        description: "Evening of classical Indian dance forms including Bharatanatyam, Odissi, and Kathak performed by renowned artists.",
+        category: "Dance",
+        city: "Kolkata",
+        venue: "Kala Mandir",
+        imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        startDate: new Date("2024-11-30"),
+        endDate: new Date("2024-11-30"),
+        price: "₹500 - ₹1200",
+        isBookable: true,
+        organizer: "Classical Dance Society",
+      },
+      {
+        title: "Heritage Walk",
+        description: "Guided heritage walk through the historic lanes of old Kolkata exploring colonial architecture and stories.",
+        category: "Cultural",
+        city: "Kolkata",
+        venue: "North Kolkata",
+        imageUrl: "https://images.unsplash.com/photo-1590736969955-71cc94901144?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        startDate: new Date("2024-12-08"),
+        endDate: new Date("2024-12-08"),
+        price: "₹300",
+        isBookable: true,
+        organizer: "Heritage Preservation Society",
+      },
+      {
+        title: "Photowalk in Sundarbans",
+        description: "Photography expedition in the Sundarbans mangrove forests capturing wildlife and natural beauty.",
+        category: "Photography",
+        city: "Sundarbans",
+        venue: "Sundarbans National Park",
+        imageUrl: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        startDate: new Date("2024-12-12"),
+        endDate: new Date("2024-12-14"),
+        price: "₹2500",
+        isBookable: true,
+        organizer: "Photography Club Bengal",
+      },
+      {
+        title: "Textile Exhibition",
+        description: "Showcase of traditional Bengali textiles including silk sarees, handloom fabrics, and embroidered garments.",
+        category: "Art",
+        city: "Kolkata",
+        venue: "Bengal Gallery",
+        imageUrl: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        startDate: new Date("2024-12-05"),
+        endDate: new Date("2024-12-15"),
+        price: "₹80",
+        isBookable: false,
+        organizer: "Textile Artisans Guild",
       }
     ];
 
@@ -442,12 +937,258 @@ export class MemStorage implements IStorage {
         validUntil: new Date("2024-12-15"),
         isActive: true,
         backgroundColor: "from-purple-500 to-purple-600",
+      },
+      {
+        title: "20% OFF Restaurant Bills",
+        description: "Get discount on authentic Bengali restaurants across Kolkata",
+        category: "Restaurants",
+        discountPercentage: 20,
+        discountAmount: null,
+        code: "BENGALIFOOD20",
+        validUntil: new Date("2024-12-25"),
+        isActive: true,
+        backgroundColor: "from-red-500 to-red-600",
+      },
+      {
+        title: "Free River Cruise",
+        description: "Book Sundarbans tour and get complimentary Hooghly river cruise",
+        category: "Tours",
+        discountPercentage: null,
+        discountAmount: null,
+        code: "RIVERCRUISE",
+        validUntil: new Date("2025-01-15"),
+        isActive: true,
+        backgroundColor: "from-blue-500 to-blue-600",
+      },
+      {
+        title: "₹500 OFF Handicrafts",
+        description: "Shop traditional West Bengal handicrafts with instant cashback",
+        category: "Shopping",
+        discountPercentage: null,
+        discountAmount: "500",
+        code: "CRAFT500",
+        validUntil: new Date("2024-12-20"),
+        isActive: true,
+        backgroundColor: "from-yellow-500 to-yellow-600",
+      },
+      {
+        title: "Family Package Deal",
+        description: "Book family packages for Darjeeling and save up to 40%",
+        category: "Family",
+        discountPercentage: 40,
+        discountAmount: null,
+        code: "FAMILY40",
+        validUntil: new Date("2024-12-31"),
+        isActive: true,
+        backgroundColor: "from-indigo-500 to-indigo-600",
+      },
+      {
+        title: "Sweet Shop Special",
+        description: "25% off on famous Bengali sweets from renowned shops",
+        category: "Sweets",
+        discountPercentage: 25,
+        discountAmount: null,
+        code: "SWEET25",
+        validUntil: new Date("2024-11-30"),
+        isActive: true,
+        backgroundColor: "from-pink-500 to-pink-600",
+      },
+      {
+        title: "Transport Discount",
+        description: "Book local transport and rickshaw rides with 15% savings",
+        category: "Transport",
+        discountPercentage: 15,
+        discountAmount: null,
+        code: "TRANSPORT15",
+        validUntil: new Date("2025-01-31"),
+        isActive: true,
+        backgroundColor: "from-teal-500 to-teal-600",
+      },
+      {
+        title: "Photography Tour",
+        description: "Professional photography tours in heritage locations at 30% off",
+        category: "Photography",
+        discountPercentage: 30,
+        discountAmount: null,
+        code: "PHOTO30",
+        validUntil: new Date("2024-12-15"),
+        isActive: true,
+        backgroundColor: "from-gray-500 to-gray-600",
       }
     ];
 
     offersData.forEach((offer, index) => {
       const id = this.currentOfferId++;
       this.offers.set(id, { ...offer, id });
+    });
+
+    // Seed restaurants
+    const restaurantsData: Omit<Restaurant, 'id'>[] = [
+      {
+        name: "Oh! Calcutta",
+        description: "Authentic Bengali cuisine in an elegant setting with traditional recipes and modern presentation.",
+        cuisine: "Bengali",
+        city: "Kolkata",
+        address: "Forum Mall, Elgin Road, Kolkata",
+        imageUrl: "https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.3",
+        reviewCount: 1250,
+        priceRange: "₹800-1200",
+        openHours: "12:00 PM - 10:30 PM",
+        phoneNumber: "+91-33-4040-8080",
+        latitude: "22.5448",
+        longitude: "88.3534",
+        isRecommended: true,
+      },
+      {
+        name: "Bhojohori Manna",
+        description: "Home-style Bengali cooking with traditional flavors and authentic preparation methods.",
+        cuisine: "Bengali",
+        city: "Kolkata",
+        address: "Elgin Road, Kolkata",
+        imageUrl: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.1",
+        reviewCount: 890,
+        priceRange: "₹400-600",
+        openHours: "11:30 AM - 10:00 PM",
+        phoneNumber: "+91-33-2465-4043",
+        latitude: "22.5431",
+        longitude: "88.3519",
+        isRecommended: true,
+      },
+      {
+        name: "Kewpie's Kitchen",
+        description: "Famous for authentic Bengali home cooking, especially fish preparations and traditional sweets.",
+        cuisine: "Bengali",
+        city: "Kolkata",
+        address: "Elgin Lane, Kolkata",
+        imageUrl: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.4",
+        reviewCount: 756,
+        priceRange: "₹500-800",
+        openHours: "12:00 PM - 3:00 PM, 7:00 PM - 10:00 PM",
+        phoneNumber: "+91-33-2485-1075",
+        latitude: "22.5441",
+        longitude: "88.3525",
+        isRecommended: true,
+      },
+      {
+        name: "6 Ballygunge Place",
+        description: "Upscale Bengali restaurant known for elaborate thalis and traditional preparations.",
+        cuisine: "Bengali",
+        city: "Kolkata",
+        address: "Ballygunge Place, Kolkata",
+        imageUrl: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.2",
+        reviewCount: 1120,
+        priceRange: "₹600-900",
+        openHours: "12:00 PM - 10:30 PM",
+        phoneNumber: "+91-33-2464-4444",
+        latitude: "22.5325",
+        longitude: "88.3639",
+        isRecommended: true,
+      },
+      {
+        name: "Flurys",
+        description: "Iconic colonial-era bakery and confectionery famous for English breakfast and pastries.",
+        cuisine: "Continental",
+        city: "Kolkata",
+        address: "Park Street, Kolkata",
+        imageUrl: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.0",
+        reviewCount: 2340,
+        priceRange: "₹300-600",
+        openHours: "7:30 AM - 10:00 PM",
+        phoneNumber: "+91-33-2229-7664",
+        latitude: "22.5539",
+        longitude: "88.3522",
+        isRecommended: true,
+      },
+      {
+        name: "Glenary's Bakery",
+        description: "Historic bakery in Darjeeling famous for fresh breads, cakes, and mountain views.",
+        cuisine: "Bakery",
+        city: "Darjeeling",
+        address: "Nehru Road, Darjeeling",
+        imageUrl: "https://images.unsplash.com/photo-1517433670267-08bbd4be890f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.3",
+        reviewCount: 567,
+        priceRange: "₹200-400",
+        openHours: "8:00 AM - 9:00 PM",
+        phoneNumber: "+91-354-225-4329",
+        latitude: "27.0410",
+        longitude: "88.2663",
+        isRecommended: true,
+      },
+      {
+        name: "Keventers",
+        description: "Famous for thick milkshakes and breakfast items with stunning Darjeeling hill views.",
+        cuisine: "Cafe",
+        city: "Darjeeling",
+        address: "Mall Road, Darjeeling",
+        imageUrl: "https://images.unsplash.com/photo-1521017432531-fbd92d768814?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.1",
+        reviewCount: 823,
+        priceRange: "₹150-350",
+        openHours: "8:30 AM - 8:30 PM",
+        phoneNumber: "+91-354-225-4217",
+        latitude: "27.0421",
+        longitude: "88.2673",
+        isRecommended: false,
+      },
+      {
+        name: "Sonar Tori",
+        description: "Riverside restaurant in Shantiniketan serving traditional Bengali cuisine with cultural ambiance.",
+        cuisine: "Bengali",
+        city: "Shantiniketan",
+        address: "Prantik, Shantiniketan",
+        imageUrl: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.0",
+        reviewCount: 445,
+        priceRange: "₹350-550",
+        openHours: "11:00 AM - 9:30 PM",
+        phoneNumber: "+91-3463-262-751",
+        latitude: "23.6863",
+        longitude: "87.6772",
+        isRecommended: false,
+      },
+      {
+        name: "Ambrosia Restaurant",
+        description: "Multi-cuisine restaurant in Digha offering fresh seafood and Bengali specialties.",
+        cuisine: "Seafood",
+        city: "Digha",
+        address: "New Digha Sea Beach Road",
+        imageUrl: "https://images.unsplash.com/photo-1563379091339-03246963d388?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "3.9",
+        reviewCount: 234,
+        priceRange: "₹400-700",
+        openHours: "12:00 PM - 10:00 PM",
+        phoneNumber: "+91-3220-267-123",
+        latitude: "21.6269",
+        longitude: "87.5085",
+        isRecommended: false,
+      },
+      {
+        name: "Taj Bengal Sonargaon",
+        description: "Luxury dining experience with exquisite Bengali cuisine and impeccable service.",
+        cuisine: "Bengali Fine Dining",
+        city: "Kolkata",
+        address: "Taj Bengal Hotel, Alipore",
+        imageUrl: "https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
+        rating: "4.6",
+        reviewCount: 678,
+        priceRange: "₹2000-3500",
+        openHours: "7:00 PM - 11:30 PM",
+        phoneNumber: "+91-33-6612-3456",
+        latitude: "22.5355",
+        longitude: "88.3433",
+        isRecommended: true,
+      }
+    ];
+
+    restaurantsData.forEach((restaurant, index) => {
+      const id = this.currentRestaurantId++;
+      this.restaurants.set(id, { ...restaurant, id });
     });
 
     // Seed default user
@@ -463,6 +1204,7 @@ export class MemStorage implements IStorage {
     };
     this.users.set(1, defaultUser);
     this.currentUserId = 2;
+
   }
 
   // User operations
@@ -619,6 +1361,81 @@ export class MemStorage implements IStorage {
     };
     this.userBookings.set(id, userBooking);
     return userBooking;
+  }
+
+  // User itinerary methods
+  async getUserItinerary(userId: number): Promise<Attraction[]> {
+    const itineraryItems = Array.from(this.userItinerary.values())
+      .filter(i => i.userId === userId);
+    const attractions: Attraction[] = [];
+    for (const item of itineraryItems) {
+      const attraction = this.attractions.get(item.attractionId!);
+      if (attraction) {
+        attractions.push(attraction);
+      }
+    }
+    return attractions;
+  }
+
+  async addToItinerary(itinerary: InsertUserItinerary): Promise<UserItinerary> {
+    const id = this.currentItineraryId++;
+    const userItinerary: UserItinerary = {
+      id,
+      userId: itinerary.userId || null,
+      attractionId: itinerary.attractionId || null,
+      visitDate: itinerary.visitDate || null,
+      notes: itinerary.notes || null,
+      createdAt: new Date(),
+    };
+    this.userItinerary.set(id, userItinerary);
+    return userItinerary;
+  }
+
+  async removeFromItinerary(userId: number, attractionId: number): Promise<boolean> {
+    const item = Array.from(this.userItinerary.values())
+      .find(i => i.userId === userId && i.attractionId === attractionId);
+    if (item) {
+      this.userItinerary.delete(item.id);
+      return true;
+    }
+    return false;
+  }
+
+  // Restaurant methods
+  async getRestaurants(city?: string): Promise<Restaurant[]> {
+    const restaurants = Array.from(this.restaurants.values());
+    if (city) {
+      return restaurants.filter(r => r.city.toLowerCase() === city.toLowerCase());
+    }
+    return restaurants;
+  }
+
+  async getRestaurant(id: number): Promise<Restaurant | undefined> {
+    return this.restaurants.get(id);
+  }
+
+  async getRecommendedRestaurants(city?: string): Promise<Restaurant[]> {
+    const restaurants = Array.from(this.restaurants.values())
+      .filter(r => r.isRecommended);
+    if (city) {
+      return restaurants.filter(r => r.city.toLowerCase() === city.toLowerCase());
+    }
+    return restaurants;
+  }
+
+  async searchRestaurants(query: string, city?: string): Promise<Restaurant[]> {
+    const lowerQuery = query.toLowerCase();
+    let restaurants = Array.from(this.restaurants.values()).filter(r =>
+      r.name.toLowerCase().includes(lowerQuery) ||
+      r.description.toLowerCase().includes(lowerQuery) ||
+      r.cuisine.toLowerCase().includes(lowerQuery)
+    );
+    
+    if (city) {
+      restaurants = restaurants.filter(r => r.city.toLowerCase() === city.toLowerCase());
+    }
+    
+    return restaurants;
   }
 }
 

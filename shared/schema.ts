@@ -75,6 +75,33 @@ export const userBookings = pgTable("user_bookings", {
   status: text("status").notNull().default("confirmed"),
 });
 
+export const userItinerary = pgTable("user_itinerary", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id),
+  attractionId: integer("attraction_id").references(() => attractions.id),
+  visitDate: timestamp("visit_date"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const restaurants = pgTable("restaurants", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  cuisine: text("cuisine").notNull(),
+  city: text("city").notNull(),
+  address: text("address").notNull(),
+  imageUrl: text("image_url").notNull(),
+  rating: numeric("rating", { precision: 2, scale: 1 }).notNull(),
+  reviewCount: integer("review_count").notNull(),
+  priceRange: text("price_range").notNull(),
+  openHours: text("open_hours").notNull(),
+  phoneNumber: text("phone_number"),
+  latitude: numeric("latitude", { precision: 10, scale: 8 }),
+  longitude: numeric("longitude", { precision: 11, scale: 8 }),
+  isRecommended: boolean("is_recommended").default(false),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -103,6 +130,15 @@ export const insertUserBookingSchema = createInsertSchema(userBookings).omit({
   bookingDate: true,
 });
 
+export const insertUserItinerarySchema = createInsertSchema(userItinerary).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertRestaurantSchema = createInsertSchema(restaurants).omit({
+  id: true,
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -116,3 +152,7 @@ export type UserFavorite = typeof userFavorites.$inferSelect;
 export type InsertUserFavorite = z.infer<typeof insertUserFavoriteSchema>;
 export type UserBooking = typeof userBookings.$inferSelect;
 export type InsertUserBooking = z.infer<typeof insertUserBookingSchema>;
+export type UserItinerary = typeof userItinerary.$inferSelect;
+export type InsertUserItinerary = z.infer<typeof insertUserItinerarySchema>;
+export type Restaurant = typeof restaurants.$inferSelect;
+export type InsertRestaurant = z.infer<typeof insertRestaurantSchema>;
