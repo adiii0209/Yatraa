@@ -11,7 +11,7 @@ export default function TopNavigation({ selectedCity, onCityClick }: TopNavigati
     <motion.div 
       initial={{ y: -50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="fixed top-0 left-1/2 transform -translate-x-1/2 w-full max-w-[375px] z-50 bg-white border-b border-gray-100 px-4 py-3"
+      className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100 px-4 py-3 max-w-[375px] mx-auto"
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
@@ -31,9 +31,10 @@ export default function TopNavigation({ selectedCity, onCityClick }: TopNavigati
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={onCityClick}
-          className="bg-primary text-white p-2 rounded-full shadow-md transition-all duration-200 hover:bg-primary/90"
+          className="bg-primary text-white px-3 py-1.5 rounded-full shadow-md transition-all duration-200 hover:bg-primary/90 flex items-center space-x-1"
         >
-          <MapPin className="w-4 h-4" />
+          <MapPin className="w-3 h-3" />
+          <span className="text-xs font-medium">{selectedCity}</span>
         </motion.button>
       </div>
     </motion.div>

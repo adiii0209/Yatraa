@@ -4,11 +4,13 @@ import { motion } from "framer-motion";
 import { List, Map, Navigation } from "lucide-react";
 import SearchBar from "@/components/SearchBar";
 import AttractionCard from "@/components/AttractionCard";
+import InteractiveMap from "@/components/InteractiveMap";
 import { Button } from "@/components/ui/button";
 import { useCityStore } from "@/hooks/useCity";
 
 export default function Explore() {
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
+  const [selectedMapLocation, setSelectedMapLocation] = useState<any>(null);
   const { selectedCity } = useCityStore();
 
   const { data: attractions = [], isLoading } = useQuery({
@@ -65,14 +67,43 @@ export default function Explore() {
 
       {/* Content based on view mode */}
       {viewMode === "map" ? (
-        <div className="px-4">
-          <div className="bg-gray-200 rounded-xl h-64 flex items-center justify-center">
-            <div className="text-center">
-              <Map className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Map View</h3>
-              <p className="text-gray-600">Interactive map coming soon!</p>
-            </div>
-          </div>
+        <div className="px-4 space-y-4">
+          <InteractiveMap
+            locations={attractions.map((attraction: any) => ({
+              id: attraction.id,
+              name: attraction.name,
+              category: attraction.category,
+              latitude: parseFloat(attraction.latitude || "22.5726"),
+              longitude: parseFloat(attraction.longitude || "88.3639"),
+              imageUrl: attraction.imageUrl
+            }))}
+            selectedLocation={selectedMapLocation}
+            onLocationSelect={setSelectedMapLocation}
+            className="h-64"
+          />
+          
+          {selectedMapLocation && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white rounded-xl shadow-md p-4"
+            >
+              <div className="flex items-center space-x-3">
+                <img
+                  src={selectedMapLocation.imageUrl}
+                  alt={selectedMapLocation.name}
+                  className="w-16 h-16 rounded-lg object-cover"
+                />
+                <div className="flex-1">
+                  <h4 className="font-semibold text-gray-900">{selectedMapLocation.name}</h4>
+                  <p className="text-sm text-gray-600">{selectedMapLocation.category}</p>
+                  <Button size="sm" className="mt-2">
+                    View Details
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          )}
         </div>
       ) : (
         <div className="px-4">

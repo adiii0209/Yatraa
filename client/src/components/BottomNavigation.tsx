@@ -14,7 +14,7 @@ export default function BottomNavigation() {
   const [location, setLocation] = useLocation();
 
   return (
-    <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-[375px] bg-white border-t border-gray-200 px-2 py-2 z-50 safe-area-padding">
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-2 py-2 z-50 safe-area-padding max-w-[375px] mx-auto">
       <div className="flex items-center justify-around">
         {tabs.map((tab) => {
           const Icon = tab.icon;

@@ -63,24 +63,50 @@ export default function Home() {
         <SearchBar city={selectedCity} />
       </div>
 
-      {/* Hero Section */}
-      <div className="px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="relative h-48 rounded-2xl overflow-hidden shadow-lg"
-          style={{
-            backgroundImage: "url('https://images.unsplash.com/photo-1544735716-392fe2489ffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400')",
-            backgroundSize: "cover",
-            backgroundPosition: "center"
-          }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-          <div className="absolute bottom-4 left-4 text-white">
-            <h2 className="text-xl font-bold mb-1">Discover West Bengal</h2>
-            <p className="text-sm opacity-90">Rich culture, heritage & natural beauty</p>
-          </div>
-        </motion.div>
+      {/* Hero Section - Now Scrollable */}
+      <div className="space-y-3">
+        <div className="px-4">
+          <h3 className="text-lg font-semibold text-gray-900">Discover West Bengal</h3>
+        </div>
+        
+        <HorizontalScroll className="px-4">
+          {[
+            {
+              title: "Rich Cultural Heritage",
+              subtitle: "Explore ancient temples & monuments",
+              image: "https://images.unsplash.com/photo-1590736969955-71cc94901144?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400"
+            },
+            {
+              title: "Natural Beauty",
+              subtitle: "Tea gardens & mangrove forests",
+              image: "https://images.unsplash.com/photo-1605106715994-18d3fecffb98?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400"
+            },
+            {
+              title: "Vibrant Festivals",
+              subtitle: "Experience Durga Puja & more",
+              image: "https://images.unsplash.com/photo-1542718610-8b57c8bfb02c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400"
+            }
+          ].map((item, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="flex-shrink-0 w-80 h-48 relative rounded-2xl overflow-hidden shadow-lg"
+              style={{
+                backgroundImage: `url('${item.image}')`,
+                backgroundSize: "cover",
+                backgroundPosition: "center"
+              }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              <div className="absolute bottom-4 left-4 text-white">
+                <h2 className="text-xl font-bold mb-1">{item.title}</h2>
+                <p className="text-sm opacity-90">{item.subtitle}</p>
+              </div>
+            </motion.div>
+          ))}
+        </HorizontalScroll>
       </div>
 
       {/* Trending Now Section */}
