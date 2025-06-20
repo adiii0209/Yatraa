@@ -1,0 +1,17 @@
+Build a mobile tourism app named “Yatra”, designed to help travelers explore West Bengal, India. The app should be inspired by the Visit Dubai app and include all core travel planning, discovery, and booking features.
+🎨 Theme:
+Use a clean, modern theme with blue and white as the primary colors. Components should have rounded corners, soft shadows, and high readability. Typography should be sans-serif, with bold headers and friendly body text. Modern and sleek design and use react js and tailwind css for making react web app
+🧭 App Flow (Navigation Structure):
+Include a bottom navigation bar with the following 5 tabs (always visible):
+Home – dynamic feed with attractions and trending now cultural spots food and drinks shopping everything it will include cards with real life pictures and when the user clicks on the cards the details of the particular attraction or any section will open....the details page will show its image, details,directions,contact,booking options and a map and also reviews
+There will also be a button on the top of the home page for selection of city after which the user can select a particular city of west bengal manually or by location and after selecting the city the app will become that city based.
+Events – calendar of festivals and cultural programs,live shows, sports,entertainment music all sections and the cards will contain image of the particular event and date and when the user taps on a particular event event details, venue,prices and booking options will show
+Explore – virtual map + list of nearby attractions and places
+Offers – discounts on tours, stays, food, tickets
+More – user profile, settings, language, offline mode
+Profile 👤 – Sidebar :
+User profile, saved trips, preferences
+Language and theme settings
+Emergency contacts, FAQ, and offline downloads
+Many events attractions have to be shown atleast more than 20 for whole app as well as for particular city all the images should be real life with modern and sleek design
+Include a search bar with autocomplete on Home and Explore screens, a floating action button (FAB) to quickly add places to the itinerary, multilingual support (Bengali, Hindi, English), offline access to maps and attraction data, integrated booking for guides, stays, and tickets, and real-time notifications for events, weather, and safety updates.
