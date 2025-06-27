@@ -87,6 +87,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Categories routes
+  app.get("/api/categories/item/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const item = await storage.getItemById(id);
+      
+      if (!item) {
+        return res.status(404).json({ error: "Item not found" });
+      }
+
+      res.json(item);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch item" });
+    }
+  });
+
+  app.get("/api/categories/:category", async (req, res) => {
+    try {
+      const category = decodeURIComponent(req.params.category);
+      const city = req.query.city as string | undefined;
+      const items = await storage.getItemsByCategory(category, city);
+      res.json(items);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch category items" });
+    }
+  });
+
   app.get("/api/events/category/:category", async (req, res) => {
     try {
       const category = req.params.category;
@@ -114,7 +141,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Offers routes
-  app.get("/api/offers", async (req, res) => {
+  app.get("/api/offers/active", async (req, res) => {
     try {
       const offers = await storage.getActiveOffers();
       res.json(offers);

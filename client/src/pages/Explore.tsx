@@ -1,17 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { List, Map, Navigation } from "lucide-react";
+import { List, Map, Navigation, Utensils, Coffee, Beer, Camera, Ticket, Hotel, Plane, Bus } from "lucide-react";
+import { useLocation } from "wouter";
 import SearchBar from "@/components/SearchBar";
 import AttractionCard from "@/components/AttractionCard";
 import InteractiveMap from "@/components/InteractiveMap";
 import { Button } from "@/components/ui/button";
 import { useCityStore } from "@/hooks/useCity";
 
+const exploreCategories = [
+  { id: "food-and-drinks", name: "Food & Drinks", icon: Utensils },
+  { id: "cafes", name: "Cafes", icon: Coffee },
+  { id: "pubs-and-bars", name: "Pubs & Bars", icon: Beer },
+  { id: "tourist-spots", name: "Tourist Spots", icon: Camera },
+  { id: "entertainment", name: "Entertainment", icon: Ticket },
+  { id: "hotels", name: "Hotels", icon: Hotel },
+  { id: "flights", name: "Flights", icon: Plane },
+  { id: "transport", name: "Transport", icon: Bus },
+];
+
 export default function Explore() {
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
   const [selectedMapLocation, setSelectedMapLocation] = useState<any>(null);
   const { selectedCity } = useCityStore();
+  const [, setLocation] = useLocation();
 
   const { data: attractions = [], isLoading } = useQuery({
     queryKey: ["/api/attractions", selectedCity],
@@ -26,6 +39,10 @@ export default function Explore() {
   // Mock nearby attractions - in real app would use geolocation
   const nearbyAttractions = attractions.slice(0, 6);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, []);
+
   return (
     <div className="space-y-4">
       <div className="px-4 py-3">
@@ -36,7 +53,8 @@ export default function Explore() {
         >
           Explore {selectedCity}
         </motion.h2>
-        
+
+
         {/* Search Bar */}
         <div className="mb-4">
           <SearchBar placeholder="Search places, attractions..." city={selectedCity} />
@@ -64,7 +82,33 @@ export default function Explore() {
           </Button>
         </div>
       </div>
-
+      {/* Explore Categories Grid */}
+      <div className="mb-4 mt-0">
+        <div className="grid grid-cols-4 gap-2 w-full">
+          {exploreCategories.map((category) => {
+            const Icon = category.icon;
+            return (
+              <motion.div
+                key={category.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                whileHover={{ scale: 1.08 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setLocation(`/category/${category.id}`)}
+                className="flex flex-col items-center justify-center bg-white rounded-xl group shadow p-2 sm:p-3 md:p-4 cursor-pointer hover:shadow-lg transition-all border border-gray-100 hover:border-primary/40 min-h-[60px] w-full"
+              >
+                <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-primary/10 to-primary/20 mb-2 group-hover:from-primary/20 group-hover:to-primary/30 transition-colors">
+                  <Icon className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-primary group-hover:text-primary-700 transition-colors" />
+                </div>
+                <span className="text-xs sm:text-sm md:text-base font-semibold text-gray-700 text-center leading-tight mt-1 group-hover:text-primary-700 transition-colors">
+                  {category.name}
+                </span>
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+        
       {/* Content based on view mode */}
       {viewMode === "map" ? (
         <div className="px-4 space-y-4">

@@ -10,6 +10,7 @@ import {
   LogOut,
   ChevronRight
 } from "lucide-react";
+import { useEffect } from "react";
 
 const menuItems = [
   {
@@ -61,6 +62,10 @@ export default function More() {
     console.log(`Menu action: ${action}`);
     // Handle navigation based on action
   };
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, []);
 
   return (
     <div className="space-y-6">

@@ -1,7 +1,8 @@
-import { Calendar, MapPin, Clock } from "lucide-react";
+import { Calendar, MapPin, Clock, Star, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLocation } from "wouter";
 import { format, parseISO } from "date-fns";
+import { useCallback, useMemo } from "react";
 
 interface EventCardProps {
   event: {
@@ -17,6 +18,10 @@ interface EventCardProps {
     price: string;
     isBookable: boolean;
     organizer: string;
+    attendees?: number;
+    rating?: number;
+    highlights?: string[];
+    tags?: string[];
   };
   variant?: "default" | "compact";
   className?: string;
@@ -33,41 +38,63 @@ export default function EventCard({
     setLocation(`/event/${event.id}`);
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = useCallback((dateString: string) => {
     return format(parseISO(dateString), "MMM dd");
-  };
+  }, []);
 
-  const formatTime = (dateString: string) => {
+  const formatTime = useCallback((dateString: string) => {
     return format(parseISO(dateString), "h:mm a");
-  };
+  }, []);
+
+  const renderRating = useCallback((rating: number = 0) => {
+    return (
+      <div className="flex items-center gap-1">
+        {[...Array(5)].map((_, i) => (
+          <Star
+            key={i}
+            className={`w-4 h-4 ${i < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+          />
+        ))}
+        <span className="text-sm text-gray-600 ml-1">{rating.toFixed(1)}</span>
+      </div>
+    );
+  }, []);
 
   if (variant === "compact") {
     return (
-      <motion.div
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
+      <div
+        className={`bg-white rounded-lg shadow-sm p-3 cursor-pointer hover:shadow-md transition-shadow ${className}`}
         onClick={handleClick}
-        className={`bg-white rounded-xl shadow-md p-4 cursor-pointer card-hover ${className}`}
+        onKeyDown={(e) => e.key === 'Enter' && handleClick()}
+        role="article"
+        tabIndex={0}
+        aria-label={`${event.title} event at ${event.venue}`}
       >
-        <div className="flex items-start space-x-3">
-          <img
-            src={event.imageUrl}
-            alt={event.title}
-            className="w-16 h-16 rounded-lg object-cover"
-          />
-          <div className="flex-1">
-            <h4 className="font-semibold text-gray-900 mb-1">{event.title}</h4>
-            <p className="text-sm text-gray-600 mb-2">{event.category}</p>
-            <div className="flex items-center text-sm text-primary">
-              <Calendar className="w-4 h-4 mr-1" />
-              <span>{formatDate(event.startDate)}</span>
+        <div className="flex items-center gap-3">
+          <div className="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden">
+            <img
+              src={event.imageUrl}
+              alt={event.title}
+              className="w-full h-full object-cover"
+              loading="lazy"
+              onError={(e) => {
+                const img = e.target as HTMLImageElement;
+                img.src = '/placeholder-event.jpg';
+                img.onerror = null;
+              }}
+            />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-sm font-medium text-gray-900 truncate">{event.title}</h3>
+            <div className="flex items-center gap-2 mt-1">
+              <Clock className="w-3 h-3 text-gray-500" />
+              <span className="text-xs text-gray-500">{formatTime(event.startDate)}</span>
             </div>
+            {event.rating && <div className="mt-1">{renderRating(event.rating)}</div>}
           </div>
-          <div className="text-right">
-            <p className="text-sm font-semibold text-primary">{event.price}</p>
-          </div>
+          <ChevronRight className="w-5 h-5 text-gray-400" />
         </div>
-      </motion.div>
+      </div>
     );
   }
 
@@ -76,12 +103,21 @@ export default function EventCard({
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       onClick={handleClick}
+      onKeyDown={(e) => e.key === 'Enter' && handleClick()}
       className={`bg-white rounded-xl shadow-md overflow-hidden cursor-pointer card-hover ${className}`}
+      role="article"
+      tabIndex={0}
+      aria-label={`${event.title} event at ${event.venue}`}
     >
       <img
         src={event.imageUrl}
         alt={event.title}
         className="w-full h-40 object-cover"
+        loading="lazy"
+        onError={(e) => {
+          e.currentTarget.src = '/placeholder-event.svg';
+          e.currentTarget.alt = 'Event image placeholder';
+        }}
       />
       <div className="p-4">
         <div className="flex items-start justify-between mb-2">
@@ -115,6 +151,7 @@ export default function EventCard({
                 e.stopPropagation();
                 // Handle booking
               }}
+              aria-label={event.price === "Free" ? "View event details" : "Book event now"}
             >
               {event.price === "Free" ? "View Details" : "Book Now"}
             </motion.button>

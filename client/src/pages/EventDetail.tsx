@@ -88,7 +88,7 @@ export default function EventDetail() {
   }
 
   const eventDate = parseISO(event.startDate);
-  const endDate = event.endDate ? parseISO(event.endDate) : null;
+  const endDate = event.endDate ? parseISO(event.endDate) : undefined;
 
   return (
     <div className="pb-6">
@@ -98,6 +98,12 @@ export default function EventDetail() {
           src={event.imageUrl}
           alt={event.title}
           className="w-full h-full object-cover"
+          loading="lazy"
+          onError={(e) => {
+            const img = e.target as HTMLImageElement;
+            img.src = '/placeholder-event.jpg';
+            img.onerror = null;
+          }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
         
@@ -130,73 +136,45 @@ export default function EventDetail() {
             </Button>
           </div>
         </div>
-
-        {/* Event Category Badge */}
-        <div className="absolute bottom-4 left-4">
-          <div className="bg-primary/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
-            {event.category}
-          </div>
-        </div>
       </div>
 
-      {/* Content */}
-      <div className="px-4 space-y-6">
-        {/* Basic Info */}
+      {/* Main Content */}
+      <div className="px-4 space-y-6 pt-6">
+        {/* Title & Date */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="py-4"
+          transition={{ delay: 0.05 }}
+          className="space-y-2"
         >
-          <h1 className="text-2xl font-bold text-gray-900 mb-3">{event.title}</h1>
-          
-          {/* Event Details Grid */}
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div className="flex items-center space-x-2">
-              <Calendar className="w-5 h-5 text-primary" />
-              <div>
-                <p className="text-sm text-gray-600">Date</p>
-                <p className="font-semibold text-gray-900">
-                  {format(eventDate, "MMM dd, yyyy")}
-                </p>
-                {endDate && (
-                  <p className="text-xs text-gray-500">
-                    to {format(endDate, "MMM dd, yyyy")}
-                  </p>
-                )}
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Clock className="w-5 h-5 text-primary" />
-              <div>
-                <p className="text-sm text-gray-600">Time</p>
-                <p className="font-semibold text-gray-900">
-                  {format(eventDate, "h:mm a")}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gray-50 rounded-xl p-4 mb-4">
-            <div className="flex items-center space-x-2 mb-2">
-              <MapPin className="w-5 h-5 text-gray-400" />
-              <p className="font-semibold text-gray-900">Venue</p>
-            </div>
-            <p className="text-gray-700">{event.venue}</p>
-            <p className="text-sm text-gray-600">{event.city}</p>
-          </div>
-
-          {/* Price */}
-          <div className="flex items-center justify-between bg-primary/5 rounded-xl p-4">
-            <div className="flex items-center space-x-2">
-              <Tag className="w-5 h-5 text-primary" />
-              <span className="text-gray-700">Price</span>
-            </div>
-            <span className={`font-bold text-lg ${
-              event.price === "Free" ? "text-green-600" : "text-primary"
-            }`}>
-              {event.price}
+          <h1 className="text-2xl font-bold text-gray-900 mb-1">{event.title}</h1>
+          <div className="flex items-center space-x-3 text-gray-700 text-sm">
+            <Calendar className="w-5 h-5 text-primary" />
+            <span>{format(eventDate, "dd MMM yyyy")}
+              {endDate && ` - ${format(endDate, "dd MMM yyyy")}`}
             </span>
+            <Clock className="w-5 h-5 text-primary ml-4" />
+            <span>{event.startDate && event.endDate && event.startDate !== event.endDate && endDate
+              ? `${format(eventDate, "hh:mm a")} - ${format(endDate, "hh:mm a")}`
+              : event.startDate ? format(eventDate, "hh:mm a") : ""}
+            </span>
+            <MapPin className="w-5 h-5 text-primary ml-4" />
+            <span>{event.venue}</span>
           </div>
+        </motion.div>
+
+        {/* Price */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.08 }}
+          className="flex items-center space-x-2"
+        >
+          <Tag className="w-5 h-5 text-primary" />
+          <span className="text-gray-700">Price</span>
+          <span className={`font-bold text-lg ${event.price === "Free" ? "text-green-600" : "text-primary"}`}>
+            {event.price}
+          </span>
         </motion.div>
 
         {/* Description */}
@@ -255,6 +233,7 @@ export default function EventDetail() {
             variant="outline" 
             size="lg"
             className="px-6"
+            onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.venue)}`, '_blank')}
           >
             <MapPin className="w-4 h-4 mr-2" />
             Directions
@@ -276,6 +255,17 @@ export default function EventDetail() {
             <li>• Contact organizer for any special requirements</li>
           </ul>
         </motion.div>
+      </div>
+
+      {/* Fixed Bottom Action Button */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 z-10">
+        <Button
+          className="w-full"
+          size="lg"
+          onClick={handleBooking}
+        >
+          {event.isBookable ? `Book Now - ${event.price}` : "Free Entry"}
+        </Button>
       </div>
     </div>
   );

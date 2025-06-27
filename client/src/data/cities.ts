@@ -12,94 +12,94 @@ export interface City {
 export const cities: City[] = [
   {
     name: "Kolkata",
-    description: "Cultural capital of India with rich heritage",
+    description: "City of Joy with Victoria Memorial, Howrah Bridge & rich culture",
     coordinates: { latitude: 22.5726, longitude: 88.3639 },
-    attractions: 45,
+    attractions: 79,
     isPopular: true
   },
   {
     name: "Darjeeling",
-    description: "Queen of Hills with tea gardens",
+    description: "Himalayan hill station with toy train & tea plantations",
     coordinates: { latitude: 27.0360, longitude: 88.2627 },
-    attractions: 18,
+    attractions: 31,
     isPopular: true
   },
   {
     name: "Sundarbans",
-    description: "Mangrove wilderness and Royal Bengal Tigers",
+    description: "World's largest mangrove forest & Bengal Tiger reserve",
     coordinates: { latitude: 21.9497, longitude: 88.9468 },
-    attractions: 12,
+    attractions: 15,
     isPopular: true
   },
   {
     name: "Digha",
-    description: "Popular beach destination with golden sands",
+    description: "Pristine beaches, marine aquarium & scenic coastline",
     coordinates: { latitude: 21.6270, longitude: 87.5090 },
-    attractions: 8,
-    isPopular: true
-  },
-  {
-    name: "Shantiniketan",
-    description: "Cultural hub of Rabindranath Tagore",
-    coordinates: { latitude: 23.6863, longitude: 87.6772 },
     attractions: 12,
     isPopular: true
   },
   {
-    name: "Siliguri",
-    description: "Gateway to Northeast India",
-    coordinates: { latitude: 26.7271, longitude: 88.3953 },
+    name: "Shantiniketan",
+    description: "Visva-Bharati University & Tagore's cultural legacy",
+    coordinates: { latitude: 23.6863, longitude: 87.6772 },
     attractions: 15,
-    isPopular: false
+    isPopular: true
+  },
+  {
+    name: "Siliguri",
+    description: "Gateway to North-East with Mahananda Wildlife Sanctuary",
+    coordinates: { latitude: 26.7271, longitude: 88.3953 },
+    attractions: 19,
+    isPopular: true
   },
   {
     name: "Durgapur",
-    description: "Industrial city with parks",
+    description: "Steel City with modern infrastructure & parks",
     coordinates: { latitude: 23.5204, longitude: 87.3119 },
-    attractions: 10,
+    attractions: 8,
     isPopular: false
   },
   {
     name: "Asansol",
-    description: "Coal mining hub and industrial center",
+    description: "Second largest city with cultural heritage",
     coordinates: { latitude: 23.6839, longitude: 86.9523 },
-    attractions: 7,
+    attractions: 10,
     isPopular: false
   },
   {
     name: "Malda",
-    description: "Historic city famous for mangoes",
+    description: "Ancient capital with mango orchards & ruins",
     coordinates: { latitude: 25.0095, longitude: 88.1433 },
-    attractions: 9,
+    attractions: 12,
     isPopular: false
   },
   {
     name: "Bishnupur",
-    description: "Terracotta temple town with rich heritage",
+    description: "Famous for terracotta temples & Baluchari sarees",
     coordinates: { latitude: 23.0783, longitude: 87.3167 },
-    attractions: 14,
-    isPopular: true
-  },
-  {
-    name: "Kalimpong",
-    description: "Serene hill station with mountain views",
-    coordinates: { latitude: 27.0669, longitude: 88.4686 },
-    attractions: 11,
-    isPopular: false
-  },
-  {
-    name: "Murshidabad",
-    description: "Former capital of Bengal with palaces",
-    coordinates: { latitude: 24.1833, longitude: 88.2667 },
     attractions: 16,
     isPopular: true
   },
   {
-    name: "Cooch Behar",
-    description: "Royal heritage city with beautiful palace",
-    coordinates: { latitude: 26.3164, longitude: 89.4386 },
-    attractions: 9,
-    isPopular: false
+    name: "Kalimpong",
+    description: "Hill station with monasteries & Himalayan views",
+    coordinates: { latitude: 27.0669, longitude: 88.4686 },
+    attractions: 14,
+    isPopular: true
+  },
+  {
+    name: "Murshidabad",
+    description: "Historic Nawabi capital with Hazarduari Palace",
+    coordinates: { latitude: 24.1833, longitude: 88.2667 },
+    attractions: 20,
+    isPopular: true
+  },
+  {
+    name: "Mayapur",
+    description: "ISKCON headquarters & spiritual destination",
+    coordinates: { latitude: 23.4200, longitude: 88.3900 },
+    attractions: 8,
+    isPopular: true
   },
   {
     name: "Purulia",

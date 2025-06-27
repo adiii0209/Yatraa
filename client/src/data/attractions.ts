@@ -9,29 +9,45 @@ export interface Attraction {
   rating: string;
   reviewCount: number;
   entryFee: string;
-  openHours: string;
+  openingHours: string;
   location: string;
-  latitude?: string;
-  longitude?: string;
+  latitude: number;
+  longitude: number;
   isTrending: boolean;
   isFeatured: boolean;
   tags: string[];
+  contactNumber: string;
+  website?: string;
+  bookingUrl?: string;
+  amenities: string[];
+  bestTimeToVisit: string;
+  nearestMetro?: string;
+  parkingAvailable: boolean;
+  wheelchairAccessible: boolean;
+  guidedToursAvailable: boolean;
+  languages: string[];
 }
 
 // This data would typically come from the API, but defining the structure here
 export const attractionCategories = [
-  "Monument",
-  "Temple",
-  "Museum",
-  "Nature",
-  "Beach",
-  "Wildlife",
+  "Historical Monuments",
+  "Religious Sites",
+  "Museums & Galleries",
+  "Nature & Parks",
+  "Beaches",
+  "Wildlife Sanctuaries",
   "Architecture",
-  "Garden",
-  "Bridge",
-  "Market",
-  "Food",
-  "Cultural"
+  "Gardens & Parks",
+  "Bridges & Landmarks",
+  "Markets & Shopping",
+  "Food & Dining",
+  "Entertainment & Lifestyle",
+  "Hill Stations",
+  "Tea Gardens",
+  "Handicraft Villages",
+  "Heritage Sites",
+  "Palaces & Forts",
+  "River Cruises"
 ];
 
 export const popularAttractions = [

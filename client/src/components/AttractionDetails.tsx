@@ -1,38 +1,56 @@
+import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
 import { 
-  ArrowLeft, 
   MapPin, 
   Clock, 
   Phone, 
   Star, 
-  Heart, 
   Share2, 
-  Directions,
   Calendar,
   Camera,
   Users,
   Coffee,
   Wifi,
   Car,
-  CreditCard,
-  Shield
+  Shield,
+  Mail,
+  Check,
+  ArrowLeft,
+  Heart,
+  Navigation
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Textarea } from "@/components/ui/textarea";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import RealInteractiveMap from "../components/RealInteractiveMap";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
-import AddToItineraryButton from "./AddToItineraryButton";
-import RealInteractiveMap from "./RealInteractiveMap";
 
-interface AttractionDetailsProps {
-  attractionId: number;
-  onBack: () => void;
-}
+const bookingOptions = [
+  {
+    id: 1,
+    name: "Standard Tour",
+    description: "Guided tour of the main attractions",
+    price: "₹999",
+    duration: "2 hours",
+    maxGroupSize: 15,
+    includes: ["Professional guide", "Entry tickets", "Bottled water"]
+  },
+  {
+    id: 2,
+    name: "Premium Experience",
+    description: "Private tour with photography session",
+    price: "₹2499",
+    duration: "3 hours",
+    maxGroupSize: 6,
+    includes: ["Private guide", "Entry tickets", "Professional photos", "Refreshments"]
+  }
+];
 
 const facilities = [
   { icon: Coffee, label: "Cafe/Restaurant" },
@@ -42,6 +60,16 @@ const facilities = [
   { icon: Shield, label: "Security" },
   { icon: Users, label: "Group Tours" }
 ];
+
+const contactInfo = {
+  phone: "+91 33 2345 6789",
+  email: "info@victoriamemorial.gov.in",
+  website: "www.victoriamemorial-cal.org",
+  address: "Victoria Memorial Hall, 1, Queens Way, Kolkata, West Bengal 700071",
+  openingDays: "Tuesday to Sunday",
+  openingHours: "10:00 AM - 5:00 PM",
+  bestTimeToVisit: "Early morning or late afternoon"
+};
 
 const reviews = [
   {
@@ -70,42 +98,16 @@ const reviews = [
   }
 ];
 
-export default function AttractionDetails({ attractionId, onBack }: AttractionDetailsProps) {
-  const [activeTab, setActiveTab] = useState("overview");
-  const [isFavorite, setIsFavorite] = useState(false);
+// Accept attraction as a prop
+interface AttractionDetailsProps {
+  attraction: any;
+}
+
+function AttractionDetails({ attraction }: AttractionDetailsProps) {
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [newReview, setNewReview] = useState({ rating: 5, comment: "" });
   const { toast } = useToast();
-  const queryClient = useQueryClient();
-
-  const { data: attraction, isLoading } = useQuery({
-    queryKey: ['/api/attractions', attractionId],
-    queryFn: async () => {
-      const response = await fetch(`/api/attractions/${attractionId}`);
-      return response.json();
-    }
-  });
-
-  const favoriteMutation = useMutation({
-    mutationFn: async () => {
-      if (isFavorite) {
-        return apiRequest(`/api/favorites/${attractionId}`, { method: 'DELETE' });
-      } else {
-        return apiRequest('/api/favorites', {
-          method: 'POST',
-          body: JSON.stringify({ userId: 1, attractionId })
-        });
-      }
-    },
-    onSuccess: () => {
-      setIsFavorite(!isFavorite);
-      queryClient.invalidateQueries({ queryKey: ['/api/favorites'] });
-      toast({
-        title: isFavorite ? "Removed from favorites" : "Added to favorites",
-        description: isFavorite 
-          ? `${attraction.name} removed from your favorites`
-          : `${attraction.name} added to your favorites`
-      });
-    }
-  });
 
   const handleShare = () => {
     if (navigator.share) {
@@ -114,12 +116,23 @@ export default function AttractionDetails({ attractionId, onBack }: AttractionDe
         text: attraction.shortDescription,
         url: window.location.href
       });
-    } else {
+    } else if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(window.location.href);
-      toast({
-        title: "Link copied",
-        description: "Attraction link copied to clipboard"
-      });
+      toast({ title: "Link copied to clipboard!" });
+    } else {
+      // Fallback for browsers without clipboard API
+      const textArea = document.createElement("textarea");
+      textArea.value = window.location.href;
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        toast({ title: "Link copied to clipboard!" });
+      } catch (err) {
+        toast({ title: "Failed to copy link. Please copy it manually.", variant: "destructive" });
+      }
+      document.body.removeChild(textArea);
     }
   };
 
@@ -128,316 +141,259 @@ export default function AttractionDetails({ attractionId, onBack }: AttractionDe
     window.open(`https://www.google.com/maps/search/${query}`, '_blank');
   };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 animate-pulse">
-        <div className="h-64 bg-gray-200" />
-        <div className="p-4 space-y-4">
-          <div className="h-8 bg-gray-200 rounded" />
-          <div className="h-4 bg-gray-200 rounded w-2/3" />
-          <div className="h-20 bg-gray-200 rounded" />
-        </div>
-      </div>
-    );
-  }
-
-  if (!attraction) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Attraction not found</h2>
-          <Button onClick={onBack}>Go Back</Button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen bg-gray-50"
+      className="min-h-screen bg-gray-50 w-full overflow-x-hidden"
     >
-      {/* Hero Image */}
-      <div className="relative h-64 overflow-hidden">
+      {/* Hero Section */}
+      <div className="relative w-full aspect-[16/9] h-64 sm:h-80 overflow-hidden">
         <img
-          src={attraction.imageUrl}
-          alt={attraction.name}
+          src={attraction?.imageUrl}
+          alt={attraction?.name}
           className="w-full h-full object-cover"
+          onError={(e) => {
+            e.currentTarget.src = "/placeholder-attraction.jpg";
+            e.currentTarget.classList.add("animate-pulse");
+          }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-        
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
         {/* Header Controls */}
-        <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onBack}
-            className="bg-white/90 backdrop-blur-sm"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
-          
-          <div className="flex items-center space-x-2">
+        <div className="absolute top-2 left-2 right-2 z-10">
+          <div className="flex items-center justify-between">
             <Button
               variant="outline"
               size="sm"
-              onClick={() => favoriteMutation.mutate()}
-              disabled={favoriteMutation.isPending}
-              className={`bg-white/90 backdrop-blur-sm ${isFavorite ? 'text-red-500' : ''}`}
+              onClick={() => window.history.back()}
+              className="bg-white/90 backdrop-blur-sm hover:bg-white/100 transition-colors"
             >
-              <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleShare}
-              className="bg-white/90 backdrop-blur-sm"
-            >
-              <Share2 className="w-4 h-4" />
-            </Button>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="bg-white/90 backdrop-blur-sm hover:bg-white/100 transition-colors"
+              >
+                <Heart className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleShare}
+                className="bg-white/90 backdrop-blur-sm hover:bg-white/100 transition-colors"
+              >
+                <Share2 className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
         </div>
-
-        {/* Title Overlay */}
-        <div className="absolute bottom-4 left-4 right-4">
-          <h1 className="text-2xl font-bold text-white mb-2">{attraction.name}</h1>
-          <div className="flex items-center space-x-4 text-white/90 text-sm">
-            <div className="flex items-center">
-              <MapPin className="w-4 h-4 mr-1" />
-              {attraction.city}
+        {/* Title and Quick Info */}
+        <div className="absolute bottom-4 left-2 right-2 z-10">
+          <div className="space-y-2">
+            <div className="space-y-1">
+              <h1 className="text-2xl font-bold text-white tracking-tight">{attraction?.name}</h1>
+              <div className="flex flex-wrap items-center gap-3 text-white/90 text-sm">
+                <div className="flex items-center">
+                  <MapPin className="w-4 h-4 mr-1" />
+                  <span>{attraction?.city}</span>
+                </div>
+                <div className="flex items-center">
+                  <Star className="w-4 h-4 mr-1 text-yellow-400 fill-yellow-400" />
+                  <span>{attraction?.rating} ({attraction?.reviewCount} reviews)</span>
+                </div>
+                <div className="flex items-center">
+                  <Clock className="w-4 h-4 mr-1" />
+                  <span>{attraction?.openingHours}</span>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center">
-              <Star className="w-4 h-4 mr-1 fill-yellow-400 text-yellow-400" />
-              {attraction.rating} ({attraction.reviewCount} reviews)
+            <div className="flex items-center gap-2">
+              <Badge variant="secondary" className="bg-white/90 text-gray-900 hover:bg-white/100 px-2 py-0.5 text-xs font-medium">
+                Open Now
+              </Badge>
+              <Badge variant="secondary" className="bg-white/90 text-gray-900 hover:bg-white/100 px-2 py-0.5 text-xs font-medium">
+                {attraction?.category}
+              </Badge>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Content */}
-      <div className="p-4">
-        {/* Quick Actions */}
-        <div className="flex space-x-3 mb-6">
-          <Button onClick={handleDirections} className="flex-1">
-            <Directions className="w-4 h-4 mr-2" />
-            Directions
+      {/* Fixed Status Bar */}
+      <div className="fixed bottom-0 left-0 right-0 z-[100] pointer-events-auto">
+        <div className="bg-white/95 backdrop-blur-sm border-t border-gray-200 px-2 h-20 flex items-center justify-between gap-2 w-full max-w-md mx-auto shadow-xl">
+          <Button
+            className="flex-1 h-12 text-base"
+            variant="outline"
+            onClick={handleDirections}
+          >
+            <MapPin className="w-5 h-5 mr-2" />
+            Get Directions
           </Button>
-          <AddToItineraryButton 
-            attractionId={attraction.id}
-            attractionName={attraction.name}
-            variant="button"
-            className="flex-1"
-          />
+          <Button
+            className="flex-1 h-12 text-base bg-primary text-white hover:bg-primary/90 transition-colors"
+            onClick={() => setShowBookingModal(true)}
+          >
+            <Calendar className="w-5 h-5 mr-2" />
+            Book Tour
+          </Button>
         </div>
-
-        {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-4">
+      </div>
+      {/* Main Content */}
+      <div className="px-2 py-6 pb-24 w-full max-w-md mx-auto">
+        <Tabs defaultValue="overview" className="w-full">
+          <TabsList className="w-full grid grid-cols-4 mb-6">
             <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="details">Details</TabsTrigger>
+            <TabsTrigger value="tours">Tours</TabsTrigger>
             <TabsTrigger value="reviews">Reviews</TabsTrigger>
             <TabsTrigger value="map">Map</TabsTrigger>
           </TabsList>
-
-          {/* Overview Tab */}
-          <TabsContent value="overview" className="space-y-4">
-            <Card>
-              <CardContent className="p-4">
-                <p className="text-gray-700 leading-relaxed">{attraction.description}</p>
-              </CardContent>
-            </Card>
-
-            {/* Key Info */}
+          <TabsContent value="overview" className="space-y-6">
+            {/* Quick Info */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Key Information</CardTitle>
+                <CardTitle className="text-lg">Quick Information</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center text-gray-600">
-                    <Clock className="w-4 h-4 mr-2" />
-                    Opening Hours
+              <CardContent className="space-y-4">
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-start space-x-2">
+                    <MapPin className="w-4 h-4 text-primary mt-0.5" />
+                    <span className="text-sm text-gray-700 break-words max-w-[220px]">{attraction?.location}</span>
                   </div>
-                  <span className="font-medium">{attraction.openHours}</span>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center text-gray-600">
-                    <CreditCard className="w-4 h-4 mr-2" />
-                    Entry Fee
+                  <div className="flex items-start space-x-2">
+                    <Clock className="w-4 h-4 text-primary mt-0.5" />
+                    <span className="text-sm text-gray-700 ">{attraction?.openHours || contactInfo.openingHours}</span>
                   </div>
-                  <Badge variant="outline">{attraction.entryFee}</Badge>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center text-gray-600">
-                    <MapPin className="w-4 h-4 mr-2" />
-                    Category
+                  <div className="flex items-start space-x-2">
+                    <Phone className="w-4 h-4 text-primary mt-0.5" />
+                    <a href={`tel:${attraction.contactNumber}`} className="text-sm text-gray-700 hover:text-primary break-all">
+                      {attraction.contactNumber}
+                    </a> 
                   </div>
-                  <Badge>{attraction.category}</Badge>
+                  <div className="flex items-start space-x-2">
+                    <Mail className="w-4 h-4 text-primary mt-0.5" />
+                    {attraction?.website ? (
+                      <a href={attraction.website.startsWith('http') ? attraction.website : `https://${attraction.website}`}
+                         target="_blank" rel="noopener noreferrer"
+                         className="text-sm text-primary underline break-all max-w-[240px]">
+                        {attraction.website}
+                      </a>
+                    ) : (
+                      <span className="text-sm text-gray-700 break-all max-w-[220px]">No website listed</span>
+                    )}
+                  </div>
                 </div>
               </CardContent>
             </Card>
-
+            {/* Description */}
+            <div className="prose prose-sm max-w-none">
+              <p className="text-gray-700">{attraction?.description}</p>
+            </div>
             {/* Facilities */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Facilities</CardTitle>
+                <CardTitle className="text-lg">Facilities & Amenities</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 gap-3">
-                  {facilities.map((facility, index) => {
-                    const Icon = facility.icon;
-                    return (
-                      <div key={index} className="flex items-center space-x-2 text-sm text-gray-600">
-                        <Icon className="w-4 h-4 text-primary" />
-                        <span>{facility.label}</span>
-                      </div>
-                    );
-                  })}
+                <div className="grid grid-cols-2 gap-4">
+                  {facilities.map((facility, index) => (
+                    <div key={index} className="flex items-center space-x-2">
+                      <facility.icon className="w-4 h-4 text-primary" />
+                      <span className="text-sm text-gray-700">{facility.label}</span>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
-
-          {/* Details Tab */}
-          <TabsContent value="details" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Contact Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex items-center space-x-3">
-                  <Phone className="w-4 h-4 text-gray-500" />
-                  <div>
-                    <p className="font-medium">Phone</p>
-                    <p className="text-sm text-gray-600">+91-33-2223-1234</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center space-x-3">
-                  <MapPin className="w-4 h-4 text-gray-500" />
-                  <div>
-                    <p className="font-medium">Address</p>
-                    <p className="text-sm text-gray-600">{attraction.location}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Booking Options */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Booking Options</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Button className="w-full">
-                  <Calendar className="w-4 h-4 mr-2" />
-                  Book Guided Tour - ₹150/person
-                </Button>
-                <Button variant="outline" className="w-full">
-                  <Users className="w-4 h-4 mr-2" />
-                  Group Booking (10+ people) - ₹100/person
-                </Button>
-                <p className="text-xs text-gray-500 text-center">
-                  Free cancellation up to 24 hours before your visit
-                </p>
-              </CardContent>
-            </Card>
-
             {/* Best Time to Visit */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Best Time to Visit</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Least Crowded</span>
-                    <Badge variant="outline">9:00 AM - 11:00 AM</Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Most Crowded</span>
-                    <Badge variant="outline">2:00 PM - 5:00 PM</Badge>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Best Light</span>
-                    <Badge variant="outline">Golden Hour</Badge>
-                  </div>
-                </div>
+                <p className="text-sm text-gray-700">{contactInfo.bestTimeToVisit}</p>
               </CardContent>
             </Card>
           </TabsContent>
-
-          {/* Reviews Tab */}
-          <TabsContent value="reviews" className="space-y-4">
-            {/* Rating Summary */}
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-4">
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-primary">{attraction.rating}</div>
-                    <div className="flex items-center justify-center mb-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star 
-                          key={i} 
-                          className={`w-4 h-4 ${
-                            i < Math.floor(parseFloat(attraction.rating)) 
-                              ? 'text-yellow-400 fill-yellow-400' 
-                              : 'text-gray-300'
-                          }`}
-                        />
-                      ))}
+          {/* Tours Tab */}
+          <TabsContent value="tours" className="space-y-6">
+            {bookingOptions.map((option) => (
+              <Card key={option.id}>
+                <CardContent className="p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-900">{option.name}</h3>
+                      <p className="text-gray-600 mt-1">{option.description}</p>
                     </div>
-                    <div className="text-sm text-gray-600">{attraction.reviewCount} reviews</div>
+                    <Badge variant="secondary" className="text-lg font-semibold">{option.price}</Badge>
                   </div>
-                  
-                  <div className="flex-1">
-                    {[5, 4, 3, 2, 1].map((stars) => (
-                      <div key={stars} className="flex items-center space-x-2 text-sm">
-                        <span className="w-4">{stars}</span>
-                        <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-yellow-400 rounded-full"
-                            style={{ width: `${Math.random() * 80 + 20}%` }}
-                          />
-                        </div>
-                      </div>
-                    ))}
+                  <div className="flex items-center space-x-6 text-sm text-gray-600 mb-4">
+                    <div className="flex items-center">
+                      <Clock className="w-4 h-4 mr-2" />
+                      {option.duration}
+                    </div>
+                    <div className="flex items-center">
+                      <Users className="w-4 h-4 mr-2" />
+                      Max {option.maxGroupSize} people
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Individual Reviews */}
+                  <div className="space-y-3">
+                    <p className="font-medium text-gray-900">What's Included:</p>
+                    <ul className="grid grid-cols-2 gap-2">
+                      {option.includes?.map((item, index) => (
+                        <li key={index} className="flex items-center text-sm text-gray-600">
+                          <Check className="w-4 h-4 mr-2 text-green-500 flex-shrink-0" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <Button 
+                    className="w-full mt-6" 
+                    size="lg"
+                    onClick={() => setShowBookingModal(true)}
+                  >
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Book This Tour
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </TabsContent>
+          <TabsContent value="reviews" className="space-y-4">
+            {/* Reviews Header */}
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <h3 className="text-lg font-semibold">Customer Reviews</h3>
+                <p className="text-sm text-gray-500">{reviews.length} reviews</p>
+              </div>
+              <Button onClick={() => setShowReviewModal(true)} variant="outline">
+                <Star className="w-4 h-4 mr-2" />
+                Write a Review
+              </Button>
+            </div>
+            {/* Reviews List */}
             <div className="space-y-4">
               {reviews.map((review) => (
                 <Card key={review.id}>
-                  <CardContent className="p-4">
-                    <div className="flex items-start space-x-3">
-                      <Avatar className="h-10 w-10">
+                  <CardContent className="pt-4">
+                    <div className="flex items-start space-x-4">
+                      <Avatar>
                         <AvatarFallback>{review.avatar}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="font-medium text-gray-900">{review.name}</span>
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-semibold text-gray-900">{review.name}</h4>
                           <span className="text-sm text-gray-500">{review.date}</span>
                         </div>
-                        <div className="flex items-center mb-2">
-                          {[...Array(5)].map((_, i) => (
-                            <Star 
-                              key={i} 
-                              className={`w-4 h-4 ${
-                                i < review.rating 
-                                  ? 'text-yellow-400 fill-yellow-400' 
-                                  : 'text-gray-300'
-                              }`}
-                            />
+                        <div className="flex items-center mt-1">
+                          {[...Array(review.rating)].map((_, i) => (
+                            <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
                           ))}
                         </div>
-                        <p className="text-gray-700 text-sm">{review.comment}</p>
+                        <p className="mt-2 text-gray-700">{review.comment}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -445,48 +401,149 @@ export default function AttractionDetails({ attractionId, onBack }: AttractionDe
               ))}
             </div>
           </TabsContent>
-
-          {/* Map Tab */}
-          <TabsContent value="map">
-            <Card>
-              <CardContent className="p-0">
-                <RealInteractiveMap
-                  locations={[{
-                    id: attraction.id,
-                    name: attraction.name,
-                    category: attraction.category,
-                    latitude: parseFloat(attraction.latitude || "22.5"),
-                    longitude: parseFloat(attraction.longitude || "88.3"),
-                    imageUrl: attraction.imageUrl
-                  }]}
-                  selectedLocation={{
-                    id: attraction.id,
-                    name: attraction.name,
-                    category: attraction.category,
-                    latitude: parseFloat(attraction.latitude || "22.5"),
-                    longitude: parseFloat(attraction.longitude || "88.3"),
-                    imageUrl: attraction.imageUrl
-                  }}
-                  className="rounded-lg"
-                />
-              </CardContent>
-            </Card>
-            
-            {/* Nearby Places */}
-            <Card className="mt-4">
-              <CardHeader>
-                <CardTitle className="text-lg">Nearby Attractions</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-4 text-gray-500">
-                  <MapPin className="w-8 h-8 mx-auto mb-2" />
-                  <p>Loading nearby attractions...</p>
-                </div>
-              </CardContent>
-            </Card>
+          <TabsContent value="map" className="h-[400px]">
+            <RealInteractiveMap
+              locations={[{
+                id: attraction.id,
+                name: attraction.name,
+                category: attraction.category,
+                latitude: parseFloat(attraction.latitude || "22.5"),
+                longitude: parseFloat(attraction.longitude || "88.3"),
+                imageUrl: attraction.imageUrl
+              }]}
+              selectedLocation={{
+                id: attraction.id,
+                name: attraction.name,
+                category: attraction.category,
+                latitude: parseFloat(attraction.latitude || "22.5"),
+                longitude: parseFloat(attraction.longitude || "88.3"),
+                imageUrl: attraction.imageUrl
+              }}
+              className="rounded-lg"
+            />
           </TabsContent>
         </Tabs>
       </div>
+      {/* Booking Modal */}
+      <Dialog open={showBookingModal} onOpenChange={setShowBookingModal}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Book Your Tour</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="date">Select Date</Label>
+              <Input
+                id="date"
+                type="date"
+                min={new Date().toISOString().split('T')[0]}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="time">Preferred Time</Label>
+              <select
+                id="time"
+                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="10:00">10:00 AM</option>
+                <option value="11:00">11:00 AM</option>
+                <option value="14:00">2:00 PM</option>
+                <option value="15:00">3:00 PM</option>
+              </select>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="guests">Number of Guests</Label>
+              <Input
+                id="guests"
+                type="number"
+                min="1"
+                max="10"
+                defaultValue="2"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="tour-type">Tour Type</Label>
+              <select
+                id="tour-type"
+                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {bookingOptions.map(option => (
+                  <option key={option.id} value={option.id}>
+                    {option.name} - {option.price}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="notes">Special Requests</Label>
+              <Textarea
+                id="notes"
+                placeholder="Any special requirements or requests?"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              onClick={() => {
+                setShowBookingModal(false);
+                alert("Your tour has been booked successfully!");
+              }}
+            >
+              Confirm Booking
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      {/* Review Modal */}
+      <Dialog open={showReviewModal} onOpenChange={setShowReviewModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Write a Review</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>Rating</Label>
+              <div className="flex items-center space-x-1 mt-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Button
+                    key={star}
+                    variant="ghost"
+                    size="sm"
+                    className="p-0 hover:bg-transparent"
+                    onClick={() => setNewReview({ ...newReview, rating: star })}
+                  >
+                    <Star
+                      className={`w-6 h-6 ${star <= newReview.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                    />
+                  </Button>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="comment">Your Review</Label>
+              <Textarea
+                id="comment"
+                placeholder="Share your experience..."
+                value={newReview.comment}
+                onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              onClick={() => {
+                setShowReviewModal(false);
+                alert("Thank you for sharing your experience!");
+                setNewReview({ rating: 5, comment: "" });
+              }}
+            >
+              Submit Review
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 }
+
+export default AttractionDetails;

@@ -9,8 +9,9 @@ import Events from "@/pages/Events";
 import Explore from "@/pages/Explore";
 import Offers from "@/pages/Offers";
 import More from "@/pages/More";
-import AttractionDetail from "@/pages/AttractionDetail";
+import DetailPage from "@/pages/DetailPage";
 import EventDetail from "@/pages/EventDetail";
+import CategoryPage from "@/pages/CategoryPage";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -21,8 +22,9 @@ function Router() {
       <Route path="/explore" component={Explore} />
       <Route path="/offers" component={Offers} />
       <Route path="/more" component={More} />
-      <Route path="/attraction/:id" component={AttractionDetail} />
+      <Route path="/category/:category/:id" component={DetailPage} />
       <Route path="/event/:id" component={EventDetail} />
+      <Route path="/category/:category" component={CategoryPage} />
       <Route component={NotFound} />
     </Switch>
   );

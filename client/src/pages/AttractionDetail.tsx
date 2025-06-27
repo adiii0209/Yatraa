@@ -14,22 +14,26 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function AttractionDetail() {
   const { id } = useParams();
   const [, setLocation] = useLocation();
   const [isFavorite, setIsFavorite] = useState(false);
 
-  const { data: attraction, isLoading } = useQuery({
-    queryKey: [`/api/attractions/${id}`],
+  const { data: item, isLoading } = useQuery({
+    queryKey: [`/api/categories/item/${id}`],
     enabled: !!id,
     queryFn: async () => {
-      const response = await fetch(`/api/attractions/${id}`);
-      if (!response.ok) throw new Error("Failed to fetch attraction");
+      const response = await fetch(`/api/categories/item/${id}`);
+      if (!response.ok) throw new Error("Failed to fetch item");
       return response.json();
     }
   });
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, []);
 
   if (isLoading) {
     return (
@@ -44,12 +48,12 @@ export default function AttractionDetail() {
     );
   }
 
-  if (!attraction) {
+  if (!item) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Attraction Not Found</h3>
-          <p className="text-gray-600">The attraction you're looking for doesn't exist.</p>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Item Not Found</h3>
+          <p className="text-gray-600">The item you're looking for doesn't exist.</p>
         </div>
       </div>
     );
@@ -60,9 +64,15 @@ export default function AttractionDetail() {
       {/* Header Image */}
       <div className="relative h-64 bg-gray-200">
         <img
-          src={attraction.imageUrl}
-          alt={attraction.name}
+          src={item.imageUrl}
+          alt={item.name}
           className="w-full h-full object-cover"
+          loading="lazy"
+          onError={(e) => {
+            const img = e.target as HTMLImageElement;
+            img.src = '/placeholder-attraction.jpg';
+            img.onerror = null;
+          }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
         
@@ -104,30 +114,48 @@ export default function AttractionDetail() {
           animate={{ opacity: 1, y: 0 }}
           className="py-4"
         >
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">{attraction.name}</h1>
-          <p className="text-gray-600 mb-3">{attraction.shortDescription}</p>
-          
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">{item.name}</h1>
+          <p className="text-gray-600 mb-3">{item.shortDescription}</p>
           <div className="flex items-center space-x-4 mb-4">
             <div className="flex items-center">
               <Star className="w-5 h-5 text-yellow-400 fill-current mr-1" />
-              <span className="font-semibold">{attraction.rating}</span>
-              <span className="text-gray-600 ml-1">({attraction.reviewCount}k reviews)</span>
+              <span className="font-semibold">{item.rating}</span>
+              <span className="text-gray-600 ml-1">({item.reviewCount}k reviews)</span>
             </div>
             <div className="flex items-center text-gray-600">
               <MapPin className="w-4 h-4 mr-1" />
-              <span>{attraction.city}</span>
+              <span>{item.city}</span>
             </div>
           </div>
-
-          <div className="bg-primary/10 rounded-lg p-3">
-            <div className="flex items-center justify-between">
-              <span className="text-primary font-semibold">Entry Fee: {attraction.entryFee}</span>
-              <div className="flex items-center text-gray-600">
-                <Clock className="w-4 h-4 mr-1" />
-                <span className="text-sm">{attraction.openHours}</span>
+          {item.entryFee && item.openHours && (
+            <div className="bg-primary/10 rounded-lg p-3 mb-4">
+              <div className="flex items-center justify-between">
+                <span className="text-primary font-semibold">Entry Fee: {item.entryFee}</span>
+                <div className="flex items-center text-gray-600">
+                  <Clock className="w-4 h-4 mr-1" />
+                  <span className="text-sm">{item.openHours}</span>
+                </div>
               </div>
             </div>
-          </div>
+          )}
+          {/* Action Buttons - moved here */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            className="flex space-x-3"
+          >
+            <Button className="flex-1">
+              <Navigation className="w-4 h-4 mr-2" />
+              Get Directions
+            </Button>
+            <Button 
+              className="flex-1 bg-primary text-white hover:bg-primary/90 transition-colors" 
+              onClick={() => setLocation(`/book/${item.id}`)}
+            >
+              Book Tour
+            </Button>
+          </motion.div>
         </motion.div>
 
         {/* Description */}
@@ -138,7 +166,7 @@ export default function AttractionDetail() {
           className="space-y-3"
         >
           <h2 className="text-lg font-semibold text-gray-900">About</h2>
-          <p className="text-gray-700 leading-relaxed">{attraction.description}</p>
+          <p className="text-gray-700 leading-relaxed">{item.description}</p>
         </motion.div>
 
         {/* Location & Contact */}
@@ -154,10 +182,10 @@ export default function AttractionDetail() {
               <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
               <div className="flex-1">
                 <p className="text-gray-900 font-medium">Address</p>
-                <p className="text-gray-600 text-sm">{attraction.location}</p>
+                <p className="text-gray-600 text-sm">{item.location}</p>
               </div>
             </div>
-            {attraction.latitude && attraction.longitude && (
+            {item.latitude && item.longitude && (
               <div className="bg-gray-200 rounded-lg h-32 flex items-center justify-center">
                 <div className="text-center text-gray-600">
                   <MapPin className="w-8 h-8 mx-auto mb-2" />
@@ -166,23 +194,6 @@ export default function AttractionDetail() {
               </div>
             )}
           </div>
-        </motion.div>
-
-        {/* Action Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="flex space-x-3"
-        >
-          <Button className="flex-1">
-            <Navigation className="w-4 h-4 mr-2" />
-            Get Directions
-          </Button>
-          <Button variant="outline" className="flex-1">
-            <Camera className="w-4 h-4 mr-2" />
-            View Photos
-          </Button>
         </motion.div>
 
         {/* Reviews Section */}

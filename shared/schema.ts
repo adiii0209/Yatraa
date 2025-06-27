@@ -30,6 +30,16 @@ export const attractions = pgTable("attractions", {
   longitude: numeric("longitude", { precision: 11, scale: 8 }),
   isTrending: boolean("is_trending").default(false),
   isFeatured: boolean("is_featured").default(false),
+  tags: text("tags").array(),
+  contactNumber: text("contact_number"), // Added contactNumber field
+  website: text("website"), // Added website field
+  bestTimeToVisit: text("best_time_to_visit"),
+  nearestMetro: text("nearest_metro"),
+  parkingAvailable: boolean("parking_available"),
+  wheelchairAccessible: boolean("wheelchair_accessible"),
+  guidedToursAvailable: boolean("guided_tours_available"),
+  languages: text("languages").array(),
+  amenities: text("amenities").array(), // <-- Added amenities field
 });
 
 export const events = pgTable("events", {

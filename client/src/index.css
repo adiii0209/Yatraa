@@ -159,7 +159,7 @@
     @apply transition-all duration-200 hover:shadow-lg hover:scale-[1.02];
   }
 
-  /* Gradient backgrounds for offers */
+  /* Gradient backgrounds for categories */
   .gradient-green {
     background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   }
@@ -174,6 +174,18 @@
 
   .gradient-blue {
     background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  }
+
+  .gradient-pink {
+    background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+  }
+
+  .gradient-yellow {
+    background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+  }
+
+  .gradient-red {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
   }
 
   /* Safe area padding for mobile devices */
