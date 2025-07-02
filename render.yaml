@@ -7,5 +7,9 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: FRONTEND_URL
+        value: https://yatrawb.netlify.app
+      - key: PORT
+        value: 10000
     healthCheckPath: /
     autoDeploy: true
