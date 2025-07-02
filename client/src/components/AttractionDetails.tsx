@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { 
   MapPin, 
@@ -31,6 +31,9 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import RealInteractiveMap from "../components/RealInteractiveMap";
 import { useToast } from "@/hooks/use-toast";
 
+import BookingDialog from "./BookingDialog";
+import TourBookingDialog from "./TourBookingDialog";
+
 const bookingOptions = [
   {
     id: 1,
@@ -43,12 +46,11 @@ const bookingOptions = [
   },
   {
     id: 2,
-    name: "Premium Experience",
-    description: "Private tour with photography session",
-    price: "₹2499",
-    duration: "3 hours",
-    maxGroupSize: 6,
-    includes: ["Private guide", "Entry tickets", "Professional photos", "Refreshments"]
+    name: "Premium Package",
+    description: "All-inclusive experience",
+    price: 999,
+    duration: "Full day",
+    includes: ["Entry access", "Guided tour", "Audio guide", "Souvenir"]
   }
 ];
 
@@ -67,8 +69,7 @@ const contactInfo = {
   website: "www.victoriamemorial-cal.org",
   address: "Victoria Memorial Hall, 1, Queens Way, Kolkata, West Bengal 700071",
   openingDays: "Tuesday to Sunday",
-  openingHours: "10:00 AM - 5:00 PM",
-  bestTimeToVisit: "Early morning or late afternoon"
+  openingHours: "10:00 AM - 5:00 PM"
 };
 
 const reviews = [
@@ -103,11 +104,43 @@ interface AttractionDetailsProps {
   attraction: any;
 }
 
+// Add a bestTimeToVisit API utility object
+const bestTimeToVisit = {
+  async get(attractionId: string | number) {
+    try {
+      const res = await fetch(`/api/attractions/${attractionId}/bestTimeToVisit`);
+      if (!res.ok) throw new Error("Failed to fetch");
+      const data = await res.json();
+      return data.bestTimeToVisit || "No data available";
+    } catch {
+      return "No data available";
+    }
+  }
+};
+
 function AttractionDetails({ attraction }: AttractionDetailsProps) {
-  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [showBookingDialog, setShowBookingDialog] = useState(false);
+  const [showTourDialog, setShowTourDialog] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [newReview, setNewReview] = useState({ rating: 5, comment: "" });
+  const [activeTab, setActiveTab] = useState("info"); // info, tickets, tours
   const { toast } = useToast();
+  // Add state for best time to visit
+  const [bestTimeToVisitValue, setBestTimeToVisitValue] = useState<string | null>(null);
+
+  // Fetch best time to visit from backend
+  useEffect(() => {
+    setBestTimeToVisitValue(null); // Reset on attraction change
+    if (!attraction?.id) return;
+    bestTimeToVisit.get(attraction.id).then(setBestTimeToVisitValue);
+  }, [attraction]);
+
+  // Add price to attraction object
+  const attractionWithPrice = {
+    ...attraction,
+    price: bookingOptions[0].price, // Use standard entry price as default
+    category: attraction?.category || "general" // Default to general if category not specified
+  };
 
   const handleShare = () => {
     if (navigator.share) {
@@ -234,10 +267,10 @@ function AttractionDetails({ attraction }: AttractionDetailsProps) {
           </Button>
           <Button
             className="flex-1 h-12 text-base bg-primary text-white hover:bg-primary/90 transition-colors"
-            onClick={() => setShowBookingModal(true)}
+            onClick={() => setShowBookingDialog(true)}
           >
             <Calendar className="w-5 h-5 mr-2" />
-            Book Tour
+            Book Tickets
           </Button>
         </div>
       </div>
@@ -313,7 +346,9 @@ function AttractionDetails({ attraction }: AttractionDetailsProps) {
                 <CardTitle className="text-lg">Best Time to Visit</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-gray-700">{contactInfo.bestTimeToVisit}</p>
+                <p className="text-sm text-gray-700">
+                  {attraction?.bestTimeToVisit === null ? "Loading..." : attraction?.bestTimeToVisit}
+                </p>
               </CardContent>
             </Card>
           </TabsContent>
@@ -334,10 +369,12 @@ function AttractionDetails({ attraction }: AttractionDetailsProps) {
                       <Clock className="w-4 h-4 mr-2" />
                       {option.duration}
                     </div>
-                    <div className="flex items-center">
-                      <Users className="w-4 h-4 mr-2" />
-                      Max {option.maxGroupSize} people
-                    </div>
+                    {((option as any).maxGroupSize) && (
+                      <div className="flex items-center">
+                        <Users className="w-4 h-4 mr-2" />
+                        Max {(option as any).maxGroupSize} people
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-3">
                     <p className="font-medium text-gray-900">What's Included:</p>
@@ -353,7 +390,7 @@ function AttractionDetails({ attraction }: AttractionDetailsProps) {
                   <Button 
                     className="w-full mt-6" 
                     size="lg"
-                    onClick={() => setShowBookingModal(true)}
+                    onClick={() => setShowTourDialog(true)}
                   >
                     <Calendar className="w-4 h-4 mr-2" />
                     Book This Tour
@@ -425,7 +462,7 @@ function AttractionDetails({ attraction }: AttractionDetailsProps) {
         </Tabs>
       </div>
       {/* Booking Modal */}
-      <Dialog open={showBookingModal} onOpenChange={setShowBookingModal}>
+      <Dialog open={showBookingDialog} onOpenChange={setShowBookingDialog}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Book Your Tour</DialogTitle>
@@ -485,7 +522,7 @@ function AttractionDetails({ attraction }: AttractionDetailsProps) {
           <DialogFooter>
             <Button
               onClick={() => {
-                setShowBookingModal(false);
+                setShowBookingDialog(false);
                 alert("Your tour has been booked successfully!");
               }}
             >
@@ -542,6 +579,19 @@ function AttractionDetails({ attraction }: AttractionDetailsProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      {/* Booking Dialogs */}
+      {/* Remove BookingDialog for the bottom bar, only show TourBookingDialog for Book Tour */}
+      <TourBookingDialog
+        isOpen={showTourDialog}
+        onClose={() => setShowTourDialog(false)}
+        attraction={attractionWithPrice}
+      />
+      {/* Keep BookingDialog for ticket booking if needed elsewhere */}
+      <BookingDialog
+        isOpen={showBookingDialog}
+        onClose={() => setShowBookingDialog(false)}
+        attraction={attractionWithPrice}
+      />
     </motion.div>
   );
 }

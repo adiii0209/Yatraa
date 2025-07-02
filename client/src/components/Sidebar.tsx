@@ -1,7 +1,8 @@
-import { Home, Map, Compass, Users, Award, Gift, ChevronRight } from "lucide-react";
+import { Home, Map, Compass, Users, Award, Gift, ChevronRight, Building2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { useLocation } from "wouter";
 
 interface SidebarItemProps {
   icon: React.ReactNode;
@@ -35,12 +36,13 @@ function SidebarItem({ icon, title, description, badge, onClick }: SidebarItemPr
   );
 }
 
-export default function Sidebar() {
+export default function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
   const [points, setPoints] = useState(150);
   const [level, setLevel] = useState("Explorer");
+  const [, setLocation] = useLocation();
 
   return (
-    <div className="w-64 h-screen bg-white border-r flex flex-col">
+    <div className="fixed left-0 top-0 w-64 h-screen bg-white border-r flex flex-col overflow-hidden z-40">
       {/* User Profile Section */}
       <div className="p-4 border-b">
         <div className="flex items-center gap-3 mb-3">
@@ -74,22 +76,38 @@ export default function Sidebar() {
           icon={<Home className="w-4 h-4" />}
           title="Home"
           description="Dashboard overview"
+          onClick={() => {
+            setLocation('/');
+            onNavigate && onNavigate();
+          }}
         />
         <SidebarItem
           icon={<Map className="w-4 h-4" />}
           title="Explore Places"
           description="Discover new destinations"
+          onClick={() => {
+            setLocation('/explore');
+            onNavigate && onNavigate();
+          }}
         />
         <SidebarItem
-          icon={<Users className="w-4 h-4" />}
+          icon={<Users className="w-6 h-6" />}
           title="Local Guides"
           description="Find official tour guides"
           badge="New"
+          onClick={() => {
+            setLocation('/official-guides');
+            onNavigate && onNavigate();
+          }}
         />
         <SidebarItem
-          icon={<Compass className="w-4 h-4" />}
+          icon={<Compass className="w-6 h-6" />}
           title="Become a Guide"
           description="Apply as a local guide"
+          onClick={() => {
+            setLocation('/local-guide');
+            onNavigate && onNavigate();
+          }}
         />
 
         {/* Travel Rewards Section */}
@@ -100,12 +118,44 @@ export default function Sidebar() {
             title="My Achievements"
             description="Badges and milestones"
             badge="3 New"
+            onClick={() => {
+              setLocation('/rewards');
+              onNavigate && onNavigate();
+            }}
           />
           <SidebarItem
             icon={<Gift className="w-4 h-4" />}
             title="Redeem Rewards"
             description="Use your travel points"
             badge={`${points} pts`}
+            onClick={() => {
+              setLocation('/redeem-rewards');
+              onNavigate && onNavigate();
+            }}
+          />
+        </div>
+
+        {/* Travel Agencies Section */}
+        <div className="pt-4 mt-4 border-t">
+          <h3 className="text-sm font-medium text-gray-500 mb-2">Travel Agencies</h3>
+          <SidebarItem
+            icon={<Building2 className="w-4 h-4" />}
+            title="Browse Agencies"
+            description="Find trusted travel partners"
+            onClick={() => {
+              setLocation('/travel-agencies');
+              onNavigate && onNavigate();
+            }}
+          />
+          <SidebarItem
+            icon={<Building2 className="w-4 h-4" />}
+            title="List Your Agency"
+            description="Join our partner network"
+            badge="New"
+            onClick={() => {
+              setLocation('/list-agency');
+              onNavigate && onNavigate();
+            }}
           />
         </div>
 

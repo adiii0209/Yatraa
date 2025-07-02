@@ -68,6 +68,7 @@ export const offers = pgTable("offers", {
   validUntil: timestamp("valid_until").notNull(),
   isActive: boolean("is_active").default(true),
   backgroundColor: text("background_color").notNull(),
+  imageUrl: text("image_url"), // Optional image URL for offer
 });
 
 export const userFavorites = pgTable("user_favorites", {

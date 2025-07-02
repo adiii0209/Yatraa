@@ -5,6 +5,8 @@ import { CalendarDays, List, Sparkles, Music, Globe, Trophy, Utensils, Palette, 
 import EventCard from "@/components/EventCard";
 import { Button } from "@/components/ui/button";
 import { useCityStore } from "@/hooks/useCity";
+import { Calendar } from "@/components/ui/calendar";
+import { format, parseISO } from "date-fns";
 
 const eventCategories = [
 	{ name: "All", value: "" },
@@ -112,7 +114,7 @@ export default function Events() {
 				)}
 			</div>
 
-			{/* Events List */}
+			{/* Events Content */}
 			<div className="px-4">
 				{isLoading ? (
 					<div className="space-y-4">
@@ -131,7 +133,7 @@ export default function Events() {
 							}
 						</p>
 					</div>
-				) : (
+				) : viewMode === "list" ? (
 					<div className="space-y-4">
 						{filteredEvents.map((event: any, index: number) => (
 							<motion.div
@@ -143,6 +145,37 @@ export default function Events() {
 								<EventCard event={event} />
 							</motion.div>
 						))}
+					</div>
+				) : (
+					<div className="space-y-4">
+						<Calendar
+							mode="multiple"
+							selected={filteredEvents.map((event: any) => parseISO(event.startDate))}
+							className="rounded-md border shadow"
+							modifiers={{
+								event: filteredEvents.map((event: any) => parseISO(event.startDate))
+							}}
+							modifiersStyles={{
+								event: { backgroundColor: "#3b82f6", color: "white" }
+							}}
+						/>
+						<div className="mt-6 space-y-4">
+							{filteredEvents.map((event: any) => (
+								<div key={event.id} className="flex items-center gap-4 p-4 rounded-lg border hover:bg-gray-50 transition-colors">
+									<div className="flex-shrink-0 w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center">
+										<CalendarDays className="w-8 h-8 text-blue-600" />
+									</div>
+									<div className="flex-grow">
+										<h3 className="font-semibold text-gray-900">{event.title}</h3>
+										<p className="text-sm text-gray-500">
+											{format(parseISO(event.startDate), "PPP")}
+											{event.endDate && ` - ${format(parseISO(event.endDate), "PPP")}`}
+										</p>
+										<p className="text-sm text-gray-500">{event.venue}</p>
+									</div>
+								</div>
+							))}
+						</div>
 					</div>
 				)}
 			</div>

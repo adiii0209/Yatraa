@@ -12,6 +12,12 @@ import More from "@/pages/More";
 import DetailPage from "@/pages/DetailPage";
 import EventDetail from "@/pages/EventDetail";
 import CategoryPage from "@/pages/CategoryPage";
+import LocalGuide from "@/pages/LocalGuide";
+import TravelRewards from "@/pages/TravelRewards";
+import OfficialGuides from "@/pages/OfficialGuides";
+import RedeemRewards from "@/pages/RedeemRewards";
+import TravelAgencies from "@/pages/TravelAgencies";
+import ListAgency from "@/pages/ListAgency";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -25,6 +31,12 @@ function Router() {
       <Route path="/category/:category/:id" component={DetailPage} />
       <Route path="/event/:id" component={EventDetail} />
       <Route path="/category/:category" component={CategoryPage} />
+      <Route path="/local-guide" component={LocalGuide} />
+      <Route path="/rewards" component={TravelRewards} />
+      <Route path="/official-guides" component={OfficialGuides} />
+      <Route path="/redeem-rewards" component={RedeemRewards} />
+      <Route path="/travel-agencies" component={TravelAgencies} />
+      <Route path="/list-agency" component={ListAgency} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -340,65 +340,65 @@ export default function Offers() {
 
 
 			{/* Featured Offers */}
-      <div className="px-4">
-        <div className="space-y-4">
-          {displayOffers.map((offer, index) => (
-            <motion.div
-              key={offer.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className=""
-            >
-              <div
-                className="bg-white rounded-xl shadow-md overflow-hidden cursor-pointer card-hover"
-                tabIndex={0}
-                aria-label={offer.title}
-              >
-                <img
-                  src={offer.image}
-                  alt={offer.title}
-                  className="w-full h-40 object-cover"
-                  loading="lazy"
-                  onError={e => {
-                    const img = e.target as HTMLImageElement;
-                    img.src = '/placeholder-event.jpg';
-                    img.onerror = null;
-                  }}
-                />
-                <div className="p-4">
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900 mb-1">{offer.title}</h3>
-                      <p className="text-sm text-gray-600">{offer.category}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-semibold text-primary">
-                        {offer.validUntil ? format(parseISO(offer.validUntil), "MMM dd") : null}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {offer.validUntil ? format(parseISO(offer.validUntil), "yyyy") : null}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center text-sm text-gray-600 mb-3">
-                    <span>{offer.description}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold text-primary">{offer.discount}</span>
-                    <button
-                      className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium"
-                      onClick={() => copyCode(offer.code)}
-                    >
-                      {offer.code}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-        {isLoading ? (
+	  <div className="px-4">
+		<div className="space-y-4">
+		  {displayOffers.map((offer: any, index: number) => (
+			<motion.div
+			  key={offer.id}
+			  initial={{ opacity: 0, y: 20 }}
+			  animate={{ opacity: 1, y: 0 }}
+			  transition={{ delay: index * 0.1 }}
+			  className=""
+			>
+			  <div
+				className="bg-white rounded-xl shadow-md overflow-hidden cursor-pointer card-hover"
+				tabIndex={0}
+				aria-label={offer.title}
+			  >
+				<img
+				  src={offer.imageUrl || offer.image || '/placeholder-event.jpg'}
+				  alt={offer.title}
+				  className="w-full h-40 object-cover"
+				  loading="lazy"
+				  onError={e => {
+					const img = e.target as HTMLImageElement;
+					img.src = '/placeholder-event.jpg';
+					img.onerror = null;
+				  }}
+				/>
+				<div className="p-4">
+				  <div className="flex items-start justify-between mb-2">
+					<div className="flex-1">
+					  <h3 className="font-semibold text-gray-900 mb-1">{offer.title}</h3>
+					  <p className="text-sm text-gray-600">{offer.category}</p>
+					</div>
+					<div className="text-right">
+					  <p className="text-sm font-semibold text-primary">
+						{offer.validUntil ? format(parseISO(offer.validUntil), "MMM dd") : null}
+					  </p>
+					  <p className="text-xs text-gray-500">
+						{offer.validUntil ? format(parseISO(offer.validUntil), "yyyy") : null}
+					  </p>
+					</div>
+				  </div>
+				  <div className="flex items-center text-sm text-gray-600 mb-3">
+					<span>{offer.description}</span>
+				  </div>
+				  <div className="flex items-center justify-between">
+					<span className="text-sm font-semibold text-primary">{offer.discount}</span>
+					<button
+					  className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium"
+					  onClick={() => copyCode(offer.code)}
+					>
+					  {offer.code}
+					</button>
+				  </div>
+				</div>
+			  </div>
+			</motion.div>
+		  ))}
+		</div>
+		{isLoading ? (
 					<div className="space-y-4">
 						{Array.from({ length: 3 }).map((_, i) => (
 							<div

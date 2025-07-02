@@ -80,8 +80,8 @@ export default function More() {
             <User className="w-8 h-8 text-primary" />
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 text-lg">John Traveler</h3>
-            <p className="text-sm text-gray-600">john@example.com</p>
+            <h3 className="font-semibold text-gray-900 text-lg">Aditya Rana</h3>
+            <p className="text-sm text-gray-600">adityarana200502@gmail.com</p>
           </div>
         </motion.div>
       </div>

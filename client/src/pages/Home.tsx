@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import SearchBar from "@/components/SearchBar";
+import { useState, useEffect } from "react";
 import HorizontalScroll from "@/components/HorizontalScroll";
 import AttractionCard from "@/components/AttractionCard";
 import { Church, Utensils, Coffee, Beer, Camera, Ticket, Hotel, Plane, Bus } from "lucide-react";
 import { useCityStore } from "@/hooks/useCity";
 import { useLocation } from "wouter";
-import { useEffect } from "react";
 
 const categories = [
 	{
@@ -56,10 +56,19 @@ const categories = [
 export default function Home() {
 	const { selectedCity } = useCityStore();
 	const [, setLocation] = useLocation();
+	const [currentIndex, setCurrentIndex] = useState(0);
 
 	// Scroll to top on mount
 	useEffect(() => {
 		window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+	}, []);
+
+	// Auto-rotate carousel
+	useEffect(() => {
+		const interval = setInterval(() => {
+			setCurrentIndex((prev) => (prev + 1) % 10);
+		}, 4000);
+		return () => clearInterval(interval);
 	}, []);
 
 	const { data: trendingAttractions = [], isLoading: loadingTrending } = useQuery({
@@ -95,7 +104,8 @@ export default function Home() {
 					<h3 className="text-lg font-semibold text-gray-900">Discover West Bengal</h3>
 				</div>
 
-				<HorizontalScroll className="px-4">
+				<div className="relative overflow-hidden h-48">
+				<AnimatePresence mode="wait" initial={false}>
 					{[
 						{
 							title: "Rich Cultural Heritage",
@@ -148,26 +158,55 @@ export default function Home() {
 							image: "https://lp-cms-production.imgix.net/2019-09/GettyImages-1137456204.jpg?auto=compress&format=auto&fit=crop&q=50&w=1200&h=800",
 						},
 					].map((item, index) => (
-						<motion.div
-							key={index}
-							initial={{ opacity: 0, x: 50 }}
-							animate={{ opacity: 1, x: 0 }}
-							transition={{ delay: index * 0.1 }}
-							className="flex-shrink-0 w-80 h-48 relative rounded-2xl overflow-hidden shadow-lg"
-							style={{
-								backgroundImage: `url('${item.image}')`,
-								backgroundSize: "cover",
-								backgroundPosition: "center",
-							}}
-						>
-							<div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-							<div className="absolute bottom-4 left-4 text-white">
-								<h2 className="text-xl font-bold mb-1">{item.title}</h2>
-								<p className="text-sm opacity-90">{item.subtitle}</p>
-							</div>
-						</motion.div>
+						index === currentIndex && (
+							<motion.div
+								key={index}
+								initial={{ opacity: 0, x: 300, y: 0 }}
+								animate={{ opacity: 1, x: 0, y: 0 }}
+								exit={{ opacity: 0, x: -300, y: 0 }}
+								transition={{ duration: 0.5 }}
+								className="w-full px-4 absolute top-0 left-0"
+								drag="x"
+								dragConstraints={{ left: 0, right: 0 }}
+								dragElastic={1}
+								onDragEnd={(e, { offset, velocity }) => {
+									const swipe = Math.abs(offset.x) * velocity.x;
+									if (swipe < -10000) {
+										setCurrentIndex((prev) => (prev + 1) % 10);
+									} else if (swipe > 10000) {
+										setCurrentIndex((prev) => (prev - 1 + 10) % 10);
+									}
+								}}
+							>
+								<div
+									className="w-full h-48 relative rounded-2xl overflow-hidden shadow-lg"
+									style={{
+										backgroundImage: `url('${item.image}')`,
+										backgroundSize: "cover",
+										backgroundPosition: "center",
+									}}
+								>
+									<div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+									<div className="absolute bottom-4 left-4 text-white">
+										<h2 className="text-xl font-bold mb-1">{item.title}</h2>
+										<p className="text-sm opacity-90">{item.subtitle}</p>
+									</div>
+								</div>
+							</motion.div>
+						)
 					))}
-				</HorizontalScroll>
+				</AnimatePresence>
+				{/* Navigation Dots */}
+				<div className="absolute bottom-2 left-0 right-0 flex justify-center space-x-2">
+					{[...Array(10)].map((_, index) => (
+						<button
+							key={index}
+							className={`w-1.5 h-1.5 rounded-full transition-colors ${index === currentIndex ? 'bg-white' : 'bg-white/50'}`}
+							onClick={() => setCurrentIndex(index)}
+						/>
+					))}
+				</div>
+			</div>
 			</div>
 
 			{/* Trending Now Section */}
@@ -209,8 +248,9 @@ export default function Home() {
 				<HorizontalScroll className="px-4">
 					{[
 						{
-							id: 1,
+							id: 9001,
 							name: "Kolkata Food Trail",
+							description: "A guided journey through Kolkata's most iconic food spots, sampling authentic Bengali cuisine and street food with local experts. Includes stops at heritage eateries and hidden gems.",
 							shortDescription: "Experience authentic Bengali cuisine with local food experts",
 							category: "Food & Drinks",
 							city: "Kolkata",
@@ -219,10 +259,27 @@ export default function Home() {
 							reviewCount: 2,
 							entryFee: "₹999/person",
 							location: "Kolkata, West Bengal",
+							openingHours: "10:00 AM - 8:00 PM",
+							latitude: 22.5726,
+							longitude: 88.3639,
+							isTrending: false,
+							isFeatured: true,
+							tags: ["food", "guided", "bengali", "heritage"],
+							contactNumber: "+91 9876543210",
+							website: "https://kolkatafoodtrail.example.com",
+							bookingUrl: "https://kolkatafoodtrail.example.com/book",
+							amenities: ["Guided Tour", "Snacks Included"],
+							bestTimeToVisit: "October - March",
+							nearestMetro: "Esplanade",
+							parkingAvailable: true,
+							wheelchairAccessible: true,
+							guidedToursAvailable: true,
+							languages: ["English", "Bengali"],
 						},
 						{
-							id: 2,
+							id: 9002,
 							name: "Sundarbans Adventure",
+							description: "Explore the mystical Sundarbans mangrove forests, spot Royal Bengal Tigers, and enjoy a boat safari with local naturalists. Includes village visits and local cuisine.",
 							shortDescription: "Explore the mystical mangrove forests and spot Royal Bengal Tigers",
 							category: "Nature",
 							city: "Sundarbans",
@@ -231,10 +288,27 @@ export default function Home() {
 							reviewCount: 3,
 							entryFee: "₹2499/person",
 							location: "Sundarbans, West Bengal",
+							openingHours: "6:00 AM - 6:00 PM",
+							latitude: 21.9497,
+							longitude: 89.1833,
+							isTrending: true,
+							isFeatured: true,
+							tags: ["wildlife", "tiger", "boat", "adventure"],
+							contactNumber: "+91 9123456780",
+							website: "https://sundarbansadventure.example.com",
+							bookingUrl: "https://sundarbansadventure.example.com/book",
+							amenities: ["Boat Safari", "Guide", "Meals Included"],
+							bestTimeToVisit: "November - February",
+							nearestMetro: undefined,
+							parkingAvailable: false,
+							wheelchairAccessible: false,
+							guidedToursAvailable: true,
+							languages: ["English", "Bengali", "Hindi"],
 						},
 						{
-							id: 3,
+							id: 9003,
 							name: "Heritage Walk",
+							description: "Discover Kolkata's colonial architecture and history on a guided walk through the city's heritage districts. Includes stories, photo stops, and refreshments.",
 							shortDescription: "Discover the rich colonial architecture and history of Kolkata",
 							category: "Culture",
 							city: "Kolkata",
@@ -243,10 +317,27 @@ export default function Home() {
 							reviewCount: 1,
 							entryFee: "₹499/person",
 							location: "Kolkata, West Bengal",
+							openingHours: "8:00 AM - 12:00 PM",
+							latitude: 22.5726,
+							longitude: 88.3639,
+							isTrending: false,
+							isFeatured: false,
+							tags: ["heritage", "walk", "history", "architecture"],
+							contactNumber: "+91 9988776655",
+							website: "https://kolkataheritagewalk.example.com",
+							bookingUrl: "https://kolkataheritagewalk.example.com/book",
+							amenities: ["Guide", "Refreshments"],
+							bestTimeToVisit: "November - March",
+							nearestMetro: "Park Street",
+							parkingAvailable: false,
+							wheelchairAccessible: false,
+							guidedToursAvailable: true,
+							languages: ["English", "Bengali"],
 						},
 						{
-							id: 4,
+							id: 9004,
 							name: "Darjeeling Tea Gardens",
+							description: "Visit the scenic tea plantations of Darjeeling, learn about tea processing, and enjoy tastings with local experts. Includes plantation walks and tea shop visits.",
 							shortDescription: "Visit scenic tea plantations and learn about tea processing",
 							category: "Nature",
 							city: "Darjeeling",
@@ -255,6 +346,22 @@ export default function Home() {
 							reviewCount: 2,
 							entryFee: "₹1499/person",
 							location: "Darjeeling, West Bengal",
+							openingHours: "9:00 AM - 5:00 PM",
+							latitude: 27.0360,
+							longitude: 88.2627,
+							isTrending: true,
+							isFeatured: false,
+							tags: ["tea", "nature", "walk", "plantation"],
+							contactNumber: "+91 8877665544",
+							website: "https://darjeelingteagardens.example.com",
+							bookingUrl: "https://darjeelingteagardens.example.com/book",
+							amenities: ["Tea Tasting", "Guided Walks"],
+							bestTimeToVisit: "March - May",
+							nearestMetro: undefined,
+							parkingAvailable: true,
+							wheelchairAccessible: false,
+							guidedToursAvailable: true,
+							languages: ["English", "Hindi", "Nepali"],
 						},
 					].map((attraction, index) => (
 						<motion.div

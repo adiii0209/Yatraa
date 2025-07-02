@@ -1071,40 +1071,40 @@ export class MemStorage implements IStorage {
     // Seed events
     const eventsData: Omit<Event, 'id'>[] = [
       {
-        title: "Durga Puja Festival 2024",
+        title: "Durga Puja Festival 2025",
         description: "Bengal's biggest festival with grand pandals, cultural shows, and traditional celebrations.",
         category: "Festival",
         city: "Kolkata",
         venue: "Multiple Locations",
         imageUrl: "https://thewandertherapy.com/wp-content/uploads/2023/10/3.durga-puja-kolkata.jpg",
-        startDate: new Date("2024-10-12"),
-        endDate: new Date("2024-10-16"),
+        startDate: new Date("2025-10-12"),
+        endDate: new Date("2025-10-16"),
         price: "Free",
         isBookable: false,
         organizer: "Durga Puja Committee"
       },
       {
-        title: "Kolkata International Film Festival 2024",
+        title: "Kolkata International Film Festival 2025",
         description: "Annual film festival showcasing international and Bengali cinema.",
         category: "Film",
         city: "Kolkata",
         venue: "Nandan Cinema",
         imageUrl: "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
-        startDate: new Date("2024-11-10"),
-        endDate: new Date("2024-11-17"),
+        startDate: new Date("2025-11-10"),
+        endDate: new Date("2025-11-17"),
         price: "₹1000",
         isBookable: true,
         organizer: "West Bengal Film Development Corporation"
       },
       {
-        title: "Poush Mela 2024",
+        title: "Poush Mela 2025",
         description: "Traditional fair celebrating Bengali culture, arts, and crafts.",
         category: "Cultural",
         city: "Shantiniketan",
         venue: "Visva-Bharati University",
         imageUrl: "https://assets.telegraphindia.com/telegraph/2023/Dec/1702306658_new-project-5.jpg0",
-        startDate: new Date("2024-12-23"),
-        endDate: new Date("2024-12-25"),
+        startDate: new Date("2025-12-23"),
+        endDate: new Date("2025-12-25"),
         price: "₹100",
         isBookable: true,
         organizer: "Visva-Bharati University"
@@ -1175,14 +1175,14 @@ export class MemStorage implements IStorage {
         organizer: "Bengal Culinary Association"
       },
       {
-        title: "Kolkata Marathon 2024",
+        title: "Kolkata Marathon 2025",
         description: "Join the annual Kolkata Marathon featuring various categories including full marathon, half marathon, and fun run.",
         category: "Sports",
         city: "Kolkata",
         venue: "Victoria Memorial Grounds",
         imageUrl: "https://assets.telegraphindia.com/telegraph/2024/Jan/1706014562_lead-75.jpg",
-        startDate: new Date("2024-01-21"),
-        endDate: new Date("2024-01-21"),
+        startDate: new Date("2025-01-21"),
+        endDate: new Date("2025-01-21"),
         price: "₹500 - ₹2000",
         isBookable: true,
         organizer: "Kolkata Sports Association",
@@ -1207,8 +1207,8 @@ export class MemStorage implements IStorage {
         city: "Kolkata",
         venue: "Nandan Cultural Complex",
         imageUrl: "https://www.hemsworthsbackalright.com/wp-content/uploads/2021/06/Hindustani-and-Carnatic-Music.png",
-        startDate: new Date("2024-11-25"),
-        endDate: new Date("2024-11-25"),
+        startDate: new Date("2025-11-25"),
+        endDate: new Date("2025-11-25"),
         price: "₹300 - ₹800",
         isBookable: true,
         organizer: "Tagore Society",
@@ -1246,8 +1246,8 @@ export class MemStorage implements IStorage {
         city: "Kolkata",
         venue: "Multiple venues across Kolkata",
         imageUrl: "https://images.news18.com/ibnlive/uploads/2025/04/Pohela-Boishakh-2025-Date-And-Time-2025-04-8d43c8a6a58b6172b533cd77ab7edbce-16x9.jpg?impolicy=website&width=640&height=360",
-        startDate: new Date("2024-04-14"),
-        endDate: new Date("2024-04-15"),
+        startDate: new Date("2025-04-14"),
+        endDate: new Date("2025-04-15"),
         price: "Free",
         isBookable: false,
         organizer: "Cultural Organizations",
@@ -1259,8 +1259,8 @@ export class MemStorage implements IStorage {
         city: "Kolkata",
         venue: "Milan Mela Prangan",
         imageUrl: "https://www.hindustantimes.com/ht-img/img/2023/02/23/550x309/The-46th-International-Kolkata-Book-fair---Swapan-_1677137847970.jpg",
-        startDate: new Date("2024-01-30"),
-        endDate: new Date("2024-02-11"),
+        startDate: new Date("2025-01-30"),
+        endDate: new Date("2025-02-11"),
         price: "₹20",
         isBookable: false,
         organizer: "Publishers & Booksellers Guild",
@@ -1271,9 +1271,9 @@ export class MemStorage implements IStorage {
         category: "Music",
         city: "Kolkata",
         venue: "Dover Lane Music Conference",
-        imageUrl: "https://images.unsplash.com/photo-1507838153414-b4b713384a76?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
-        startDate: new Date("2024-01-20"),
-        endDate: new Date("2024-01-25"),
+        imageUrl: "https://www.siliconindia.com/news/newsimages/special/4w1XxUlm.jpeg",
+        startDate: new Date("2025-01-20"),
+        endDate: new Date("2025-01-25"),
         price: "₹100 - ₹500",
         isBookable: true,
         organizer: "Dover Lane Music Conference",
@@ -1284,9 +1284,9 @@ export class MemStorage implements IStorage {
         category: "Religious",
         city: "Kolkata",
         venue: "Dakshineswar Kali Temple",
-        imageUrl: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
-        startDate: new Date("2024-12-01"),
-        endDate: new Date("2024-12-31"),
+        imageUrl: "https://media1.thrillophilia.com/filestore/ve6q3r35ohqelz10ngs6ircrcmv1_shutterstock_461554210.jpg?w=400&dpr=2",
+        startDate: new Date("2025-12-01"),
+        endDate: new Date("2025-12-31"),
         price: "Free",
         isBookable: false,
         organizer: "Temple Committee",
@@ -1297,9 +1297,9 @@ export class MemStorage implements IStorage {
         category: "Art",
         city: "Kolkata",
         venue: "Science City",
-        imageUrl: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
-        startDate: new Date("2024-12-15"),
-        endDate: new Date("2024-12-20"),
+        imageUrl: "https://boldnewsonline.com/wp-content/uploads/2021/02/Handicrafts-09.jpg",
+        startDate: new Date("2025-12-15"),
+        endDate: new Date("2025-12-20"),
         price: "₹50",
         isBookable: false,
         organizer: "West Bengal Handicrafts Board",
@@ -1310,9 +1310,9 @@ export class MemStorage implements IStorage {
         category: "Music",
         city: "Shantiniketan",
         venue: "Visva-Bharati University",
-        imageUrl: "https://images.unsplash.com/photo-1507838153414-b4b713384a76?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
-        startDate: new Date("2024-11-10"),
-        endDate: new Date("2024-11-12"),
+        imageUrl: "https://images.indianexpress.com/2016/10/mamata-iktara-759.jpg?w=414",
+        startDate: new Date("2025-11-10"),
+        endDate: new Date("2025-11-12"),
         price: "₹200 - ₹800",
         isBookable: true,
         organizer: "Baul Sangha",
@@ -1323,9 +1323,9 @@ export class MemStorage implements IStorage {
         category: "Festival",
         city: "Chandannagar",
         venue: "Various Pandals",
-        imageUrl: "https://images.unsplash.com/photo-1542718610-8b57c8bfb02c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
-        startDate: new Date("2024-11-20"),
-        endDate: new Date("2024-11-22"),
+        imageUrl: "https://assets.telegraphindia.com/telegraph/2023/Nov/1700296510_barabazar-picture-by-saumajit-roy-karmakar-1.jpg",
+        startDate: new Date("2025-11-20"),
+        endDate: new Date("2025-11-22"),
         price: "Free",
         isBookable: false,
         organizer: "Local Committees",
@@ -1336,9 +1336,9 @@ export class MemStorage implements IStorage {
         category: "Food",
         city: "Kolkata",
         venue: "Eco Park",
-        imageUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
-        startDate: new Date("2024-12-28"),
-        endDate: new Date("2024-12-30"),
+        imageUrl: "https://www.goingplaceswithanwesha.com/wp-content/uploads/2019/08/3d97e-e90ed7_4c4577184f2a44d1967232165675d8c5mv2-1.jpg",
+        startDate: new Date("2025-12-28"),
+        endDate: new Date("2025-12-30"),
         price: "₹100",
         isBookable: true,
         organizer: "Food Lovers Association",
@@ -1349,9 +1349,9 @@ export class MemStorage implements IStorage {
         category: "Cultural",
         city: "Kolkata",
         venue: "Rabindra Sadan",
-        imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
-        startDate: new Date("2024-10-20"),
-        endDate: new Date("2024-10-20"),
+        imageUrl: "https://nie-images.s3.amazonaws.com/gall_content/2016/10/2016_10$largeimg07_Oct_2016_112220390.jpg",
+        startDate: new Date("2025-10-20"),
+        endDate: new Date("2025-10-20"),
         price: "₹150",
         isBookable: true,
         organizer: "Cultural Heritage Society",
@@ -1362,9 +1362,9 @@ export class MemStorage implements IStorage {
         category: "Sports",
         city: "Kolkata",
         venue: "Hooghly River",
-        imageUrl: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
-        startDate: new Date("2024-12-10"),
-        endDate: new Date("2024-12-10"),
+        imageUrl: "https://www.alappuzhatourism.com/admin/userfiles/1500875635_Kerala_boatrace.jpg",
+        startDate: new Date("2025-12-10"),
+        endDate: new Date("2025-12-10"),
         price: "Free",
         isBookable: false,
         organizer: "River Sports Association",
@@ -1375,9 +1375,9 @@ export class MemStorage implements IStorage {
         category: "Dance",
         city: "Kolkata",
         venue: "Kala Mandir",
-        imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
-        startDate: new Date("2024-11-30"),
-        endDate: new Date("2024-11-30"),
+        imageUrl: "https://5.imimg.com/data5/SW/CR/GLADMIN-51568465/odissi-dance-500x500.jpg",
+        startDate: new Date("2025-11-30"),
+        endDate: new Date("2025-11-30"),
         price: "₹500 - ₹1200",
         isBookable: true,
         organizer: "Classical Dance Society",
@@ -1388,9 +1388,9 @@ export class MemStorage implements IStorage {
         category: "Cultural",
         city: "Kolkata",
         venue: "North Kolkata",
-        imageUrl: "https://images.unsplash.com/photo-1590736969955-71cc94901144?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
-        startDate: new Date("2024-12-08"),
-        endDate: new Date("2024-12-08"),
+        imageUrl: "https://skyticket.com/guide/wp-content/uploads/2017/12/iStock-859109190.jpg",
+        startDate: new Date("2025-12-08"),
+        endDate: new Date("2025-12-08"),
         price: "₹300",
         isBookable: true,
         organizer: "Heritage Preservation Society",
@@ -1401,9 +1401,9 @@ export class MemStorage implements IStorage {
         category: "Photography",
         city: "Sundarbans",
         venue: "Sundarbans National Park",
-        imageUrl: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
-        startDate: new Date("2024-12-12"),
-        endDate: new Date("2024-12-14"),
+        imageUrl: "https://i0.wp.com/kaziranganationalparkassam.in/wp-content/uploads/2021/06/pexels-photo-2689436.jpeg?ssl=1",
+        startDate: new Date("2025-12-12"),
+        endDate: new Date("2025-12-14"),
         price: "₹2500",
         isBookable: true,
         organizer: "Photography Club Bengal",
@@ -1414,9 +1414,9 @@ export class MemStorage implements IStorage {
         category: "Art",
         city: "Kolkata",
         venue: "Bengal Gallery",
-        imageUrl: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600",
-        startDate: new Date("2024-12-05"),
-        endDate: new Date("2024-12-15"),
+        imageUrl: "https://www.naturediary.in/wp-content/uploads/2022/01/apparels-in-handicraft-fair.jpg",
+        startDate: new Date("2025-12-05"),
+        endDate: new Date("2025-12-15"),
         price: "₹80",
         isBookable: false,
         organizer: "Textile Artisans Guild",
@@ -1443,7 +1443,8 @@ export class MemStorage implements IStorage {
         code: "RESTO40",
         validUntil: new Date(new Date().setDate(new Date().getDate() + 30)),
         isActive: true,
-        backgroundColor: "from-red-500 to-red-600"
+        backgroundColor: "from-red-500 to-red-600",
+        imageUrl: "https://assets.architecturaldigest.in/photos/67fe27f055324883f1e4fed2/16:9/w_1616,h_909,c_limit/Untitled%20design%203.jpg"
       },
       {
         title: "Shopping Festival: Up to 50% OFF",
@@ -1454,7 +1455,8 @@ export class MemStorage implements IStorage {
         code: "SHOP50",
         validUntil: new Date(new Date().setDate(new Date().getDate() + 25)),
         isActive: true,
-        backgroundColor: "from-pink-500 to-pink-600"
+        backgroundColor: "from-pink-500 to-pink-600",
+        imageUrl: null
       },
       {
         title: "Local Transport Pass: 25% OFF",
@@ -1465,7 +1467,8 @@ export class MemStorage implements IStorage {
         code: "LOCAL25",
         validUntil: new Date(new Date().setDate(new Date().getDate() + 45)),
         isActive: true,
-        backgroundColor: "from-cyan-500 to-cyan-600"
+        backgroundColor: "from-cyan-500 to-cyan-600",
+        imageUrl: null
       },
       {
         title: "Train Travel: ₹1000 OFF",
@@ -1476,7 +1479,8 @@ export class MemStorage implements IStorage {
         code: "TRAIN1K",
         validUntil: new Date(new Date().setDate(new Date().getDate() + 60)),
         isActive: true,
-        backgroundColor: "from-slate-500 to-slate-600"
+        backgroundColor: "from-slate-500 to-slate-600",
+        imageUrl: null
       },
       {
         title: "Car Rental: 35% OFF",
@@ -1487,7 +1491,8 @@ export class MemStorage implements IStorage {
         code: "CAR35",
         validUntil: new Date(new Date().setDate(new Date().getDate() + 30)),
         isActive: true,
-        backgroundColor: "from-zinc-500 to-zinc-600"
+        backgroundColor: "from-zinc-500 to-zinc-600",
+        imageUrl: null
       },
       {
         title: "Bike Tours: 20% OFF",
@@ -1498,7 +1503,8 @@ export class MemStorage implements IStorage {
         code: "BIKE20",
         validUntil: new Date(new Date().setDate(new Date().getDate() + 40)),
         isActive: true,
-        backgroundColor: "from-lime-500 to-lime-600"
+        backgroundColor: "from-lime-500 to-lime-600",
+        imageUrl: null
       },
       {
         title: "Photography Tours: 30% OFF",
@@ -1509,7 +1515,8 @@ export class MemStorage implements IStorage {
         code: "PHOTO30",
         validUntil: new Date(new Date().setDate(new Date().getDate() + 35)),
         isActive: true,
-        backgroundColor: "from-rose-500 to-rose-600"
+        backgroundColor: "from-rose-500 to-rose-600",
+        imageUrl: null
       },
       {
         title: "Entertainment Package: 45% OFF",
@@ -1520,7 +1527,8 @@ export class MemStorage implements IStorage {
         code: "ENTERTAIN45",
         validUntil: new Date(new Date().setDate(new Date().getDate() + 25)),
         isActive: true,
-        backgroundColor: "from-violet-500 to-violet-600"
+        backgroundColor: "from-violet-500 to-violet-600",
+        imageUrl: null
       },
       {
         title: "Air Travel: ₹2000 OFF",
@@ -1531,7 +1539,8 @@ export class MemStorage implements IStorage {
         code: "AIR2K",
         validUntil: new Date(new Date().setDate(new Date().getDate() + 30)),
         isActive: true,
-        backgroundColor: "from-sky-500 to-sky-600"
+        backgroundColor: "from-sky-500 to-sky-600",
+        imageUrl: null
       },
       {
         title: "Durga Puja Special: 40% OFF Hotels",
@@ -1540,9 +1549,10 @@ export class MemStorage implements IStorage {
         discountPercentage: 40,
         discountAmount: null,
         code: "PUJA40",
-        validUntil: new Date("2024-10-20"),
+        validUntil: new Date("2025-10-20"),
         isActive: true,
-        backgroundColor: "from-rose-500 to-rose-600"
+        backgroundColor: "from-rose-500 to-rose-600",
+        imageUrl: null
       },
       {
         title: "Winter Package: ₹5000 OFF",
@@ -1551,9 +1561,10 @@ export class MemStorage implements IStorage {
         discountPercentage: null,
         discountAmount: "5000",
         code: "WINTER5K",
-        validUntil: new Date("2024-12-31"),
+        validUntil: new Date("2025-12-31"),
         isActive: true,
-        backgroundColor: "from-teal-500 to-teal-600"
+        backgroundColor: "from-teal-500 to-teal-600",
+        imageUrl: null
       },
       {
         title: "Cultural Events Pass: 35% OFF",
@@ -1562,9 +1573,10 @@ export class MemStorage implements IStorage {
         discountPercentage: 35,
         discountAmount: null,
         code: "CULTURE35",
-        validUntil: new Date("2024-12-25"),
+        validUntil: new Date("2025-12-25"),
         isActive: true,
-        backgroundColor: "from-violet-500 to-violet-600"
+        backgroundColor: "from-violet-500 to-violet-600",
+        imageUrl: null
       },
       {
         title: "Cafe Happy Hours: 30% OFF",
@@ -1575,7 +1587,8 @@ export class MemStorage implements IStorage {
         code: "CAFE30",
         validUntil: new Date(new Date().setDate(new Date().getDate() + 15)),
         isActive: true,
-        backgroundColor: "from-cyan-500 to-cyan-600"
+        backgroundColor: "from-cyan-500 to-cyan-600",
+        imageUrl: null
       },
       {
         title: "Music Festival Pass: 25% OFF",
@@ -1586,7 +1599,8 @@ export class MemStorage implements IStorage {
         code: "MUSIC25",
         validUntil: new Date(new Date().setDate(new Date().getDate() + 20)),
         isActive: true,
-        backgroundColor: "from-indigo-500 to-indigo-600"
+        backgroundColor: "from-indigo-500 to-indigo-600",
+        imageUrl: null
       },
       {
         title: "Adventure Package: ₹1500 OFF",
@@ -1597,7 +1611,8 @@ export class MemStorage implements IStorage {
         code: "ADVENTURE1500",
         validUntil: new Date(new Date().setDate(new Date().getDate() + 12)),
         isActive: true,
-        backgroundColor: "from-emerald-500 to-emerald-600"
+        backgroundColor: "from-emerald-500 to-emerald-600",
+        imageUrl: null
       },
       {
         title: "Flash Sale: 70% OFF Tours",
@@ -1608,7 +1623,8 @@ export class MemStorage implements IStorage {
         code: "FLASH70",
         validUntil: new Date(new Date().setDate(new Date().getDate() + 7)),
         isActive: true,
-        backgroundColor: "from-blue-500 to-blue-600"
+        backgroundColor: "from-blue-500 to-blue-600",
+        imageUrl: null
       },
       {
         title: "Early Bird Special: 40% OFF Events",
@@ -1619,7 +1635,8 @@ export class MemStorage implements IStorage {
         code: "EARLY40",
         validUntil: new Date(new Date().setDate(new Date().getDate() + 10)),
         isActive: true,
-        backgroundColor: "from-yellow-500 to-yellow-600"
+        backgroundColor: "from-yellow-500 to-yellow-600",
+        imageUrl: null
       },
       {
         title: "Weekend Getaway: ₹2000 OFF",
@@ -1630,7 +1647,8 @@ export class MemStorage implements IStorage {
         code: "WEEKEND2K",
         validUntil: new Date(new Date().setDate(new Date().getDate() + 5)),
         isActive: true,
-        backgroundColor: "from-pink-500 to-pink-600"
+        backgroundColor: "from-pink-500 to-pink-600",
+        imageUrl: null
       },
       {
         title: "50% OFF Heritage Hotels",
@@ -1639,9 +1657,10 @@ export class MemStorage implements IStorage {
         discountPercentage: 50,
         discountAmount: null,
         code: "HERITAGE50",
-        validUntil: new Date("2024-12-31"),
+        validUntil: new Date("2025-12-31"),
         isActive: true,
         backgroundColor: "from-green-500 to-green-600",
+        imageUrl: null
       },
       {
         title: "Buy 2 Get 1 Free Food Tours",
@@ -1650,9 +1669,10 @@ export class MemStorage implements IStorage {
         discountPercentage: null,
         discountAmount: null,
         code: "FOODTOUR3",
-        validUntil: new Date("2024-11-30"),
+        validUntil: new Date("2025-11-30"),
         isActive: true,
         backgroundColor: "from-orange-500 to-orange-600",
+        imageUrl: null
       },
       {
         title: "30% OFF Tea Garden Tours",
@@ -1661,9 +1681,10 @@ export class MemStorage implements IStorage {
         discountPercentage: 30,
         discountAmount: null,
         code: "TEATOUR30",
-        validUntil: new Date("2024-12-15"),
+        validUntil: new Date("2025-12-15"),
         isActive: true,
         backgroundColor: "from-purple-500 to-purple-600",
+        imageUrl: null
       },
       {
         title: "20% OFF Restaurant Bills",
@@ -1672,9 +1693,10 @@ export class MemStorage implements IStorage {
         discountPercentage: 20,
         discountAmount: null,
         code: "BENGALIFOOD20",
-        validUntil: new Date("2024-12-25"),
+        validUntil: new Date("2025-12-25"),
         isActive: true,
         backgroundColor: "from-red-500 to-red-600",
+        imageUrl: null
       },
       {
         title: "Free River Cruise",
@@ -1686,6 +1708,7 @@ export class MemStorage implements IStorage {
         validUntil: new Date("2025-01-15"),
         isActive: true,
         backgroundColor: "from-blue-500 to-blue-600",
+        imageUrl: null
       },
       {
         title: "₹500 OFF Handicrafts",
@@ -1694,9 +1717,10 @@ export class MemStorage implements IStorage {
         discountPercentage: null,
         discountAmount: "500",
         code: "CRAFT500",
-        validUntil: new Date("2024-12-20"),
+        validUntil: new Date("2025-12-20"),
         isActive: true,
         backgroundColor: "from-yellow-500 to-yellow-600",
+        imageUrl: null
       },
       {
         title: "Family Package Deal",
@@ -1705,9 +1729,10 @@ export class MemStorage implements IStorage {
         discountPercentage: 40,
         discountAmount: null,
         code: "FAMILY40",
-        validUntil: new Date("2024-12-31"),
+        validUntil: new Date("2025-12-31"),
         isActive: true,
         backgroundColor: "from-indigo-500 to-indigo-600",
+        imageUrl: null
       },
       {
         title: "Sweet Shop Special",
@@ -1716,9 +1741,10 @@ export class MemStorage implements IStorage {
         discountPercentage: 25,
         discountAmount: null,
         code: "SWEET25",
-        validUntil: new Date("2024-11-30"),
+        validUntil: new Date("2025-11-30"),
         isActive: true,
         backgroundColor: "from-pink-500 to-pink-600",
+        imageUrl: null
       },
       {
         title: "Transport Discount",
@@ -1730,6 +1756,7 @@ export class MemStorage implements IStorage {
         validUntil: new Date("2025-01-31"),
         isActive: true,
         backgroundColor: "from-teal-500 to-teal-600",
+        imageUrl: null
       },
       {
         title: "Photography Tour",
@@ -1738,9 +1765,10 @@ export class MemStorage implements IStorage {
         discountPercentage: 30,
         discountAmount: null,
         code: "PHOTO30",
-        validUntil: new Date("2024-12-15"),
+        validUntil: new Date("2025-12-15"),
         isActive: true,
         backgroundColor: "from-gray-500 to-gray-600",
+        imageUrl: null
       }
     ];
 
