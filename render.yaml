@@ -10,6 +10,6 @@ services:
       - key: FRONTEND_URL
         value: https://yatrawb.netlify.app
       - key: PORT
-        value: 10000
+        value: 5001
     healthCheckPath: /
     autoDeploy: true
